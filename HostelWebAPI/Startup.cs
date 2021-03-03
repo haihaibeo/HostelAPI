@@ -36,9 +36,9 @@ namespace HostelWebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultCnn"));
             });
 
-            //services.AddIdentity<User, IdentityRole>()
-            //    .AddEntityFrameworkStores<HostelDBContext>()
-            //    .AddDefaultTokenProviders();    
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<HostelDBContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<IDbRepo, DbRepo>();
             services.AddControllers().AddNewtonsoftJson();
@@ -69,6 +69,7 @@ namespace HostelWebAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

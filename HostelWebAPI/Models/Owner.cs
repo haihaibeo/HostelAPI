@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HostelWebAPI.Models
 {
-    public partial class Owner
+    public class Owner : User
     {
         public Owner()
         {
-            Property = new HashSet<Property>();
+            Properties = new HashSet<Property>();
         }
-
-        public string UserId { get; set; }
         public string PassportNumber { get; set; }
 
-        public virtual User User { get; set; }
-        public virtual ICollection<Property> Property { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }

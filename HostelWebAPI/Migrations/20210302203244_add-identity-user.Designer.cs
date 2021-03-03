@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210302203244_add-identity-user")]
+    partial class addidentityuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace HostelWebAPI.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("CommentString")
+                    b.Property<string>("Comment1")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Comment")
@@ -83,8 +85,6 @@ namespace HostelWebAPI.Migrations
                     b.HasKey("CommentId");
 
                     b.HasIndex("PropertyId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Comment");
                 });
@@ -183,7 +183,8 @@ namespace HostelWebAPI.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnName("OwnerID")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("money");
@@ -212,8 +213,6 @@ namespace HostelWebAPI.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.HasKey("PropertyId");
-
-                    b.HasIndex("OwnerId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -320,6 +319,7 @@ namespace HostelWebAPI.Migrations
                         .IsUnicode(false);
 
                     b.Property<string>("PropertyId")
+                        .IsRequired()
                         .HasColumnName("PropertyID")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -347,9 +347,10 @@ namespace HostelWebAPI.Migrations
                         .HasColumnType("money");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnName("UserID")
-                        .HasColumnType("nvarchar(450)")
-                        .HasMaxLength(450)
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
                         .IsUnicode(false);
 
                     b.HasKey("ReservationId")
@@ -360,8 +361,6 @@ namespace HostelWebAPI.Migrations
                     b.HasIndex("PropertyId");
 
                     b.HasIndex("ReservationStatusId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ReservationHistory");
                 });
@@ -396,10 +395,6 @@ namespace HostelWebAPI.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
@@ -414,8 +409,7 @@ namespace HostelWebAPI.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasColumnType("nvarchar(256)")
@@ -458,31 +452,27 @@ namespace HostelWebAPI.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
                 {
-                    b.Property<string>("UserPropertyId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                    b.Property<string>("UserId")
+                        .HasColumnName("UserID")
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.Property<string>("PropertyId")
+                        .HasColumnName("PropertyID")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)")
-                        .HasMaxLength(450);
-
-                    b.HasKey("UserPropertyId");
+                    b.HasKey("UserId", "PropertyId")
+                        .HasName("PK_UserPropertyLikes");
 
                     b.HasIndex("PropertyId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserPropertyLikes");
+                    b.ToTable("UserPropertyLike");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -616,20 +606,10 @@ namespace HostelWebAPI.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HostelWebAPI.Models.Owner", b =>
-                {
-                    b.HasBaseType("HostelWebAPI.Models.User");
-
-                    b.Property<string>("PassportNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Owner");
-                });
-
             modelBuilder.Entity("HostelWebAPI.Models.City", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Country", "Country")
-                        .WithMany("Cities")
+                        .WithMany("City")
                         .HasForeignKey("CountryId")
                         .HasConstraintName("FK_Cities_Countries")
                         .IsRequired();
@@ -638,22 +618,16 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.Comment", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("Comments")
+                        .WithMany("Comment")
                         .HasForeignKey("PropertyId")
                         .HasConstraintName("FK_Comments_Properties")
-                        .IsRequired();
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.Image", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("Images")
+                        .WithMany("Image")
                         .HasForeignKey("PropertyId")
                         .HasConstraintName("FK_Images_Properties")
                         .IsRequired();
@@ -661,14 +635,8 @@ namespace HostelWebAPI.Migrations
 
             modelBuilder.Entity("HostelWebAPI.Models.Property", b =>
                 {
-                    b.HasOne("HostelWebAPI.Models.Owner", "Owner")
-                        .WithMany("Properties")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HostelWebAPI.Models.PropertyType", "PropertyType")
-                        .WithMany("Properties")
+                        .WithMany("Property")
                         .HasForeignKey("PropertyTypeId")
                         .HasConstraintName("FK_Properties_PropertyTypes")
                         .IsRequired();
@@ -677,7 +645,7 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.PropertyAddress", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.City", "City")
-                        .WithMany("PropertyAddresses")
+                        .WithMany("PropertyAddress")
                         .HasForeignKey("CityId")
                         .HasConstraintName("FK_RoomAddresses_Cities")
                         .IsRequired();
@@ -698,7 +666,7 @@ namespace HostelWebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.Comment", "ReplyToComment")
-                        .WithMany("ReplyReplyToComments")
+                        .WithMany("ReplyReplyToComment")
                         .HasForeignKey("ReplyToCommentId")
                         .HasConstraintName("FK_Replies_Comments1")
                         .IsRequired();
@@ -707,37 +675,31 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.ReservationHistory", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.PaymentStatus", "PaymentStatus")
-                        .WithMany("ReservationHistories")
+                        .WithMany("ReservationHistory")
                         .HasForeignKey("PaymentStatusId")
                         .HasConstraintName("FK_ReservationHistories_PaymentStatus")
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("ReservationHistories")
+                        .WithMany("ReservationHistory")
                         .HasForeignKey("PropertyId")
-                        .HasConstraintName("FK_ReservationHistories_Properties");
+                        .HasConstraintName("FK_ReservationHistories_Properties")
+                        .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.ReservationStatus", "ReservationStatus")
-                        .WithMany("ReservationHistories")
+                        .WithMany("ReservationHistory")
                         .HasForeignKey("ReservationStatusId")
                         .HasConstraintName("FK_ReservationHistories_ReservationStatus")
                         .IsRequired();
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("ReservationHistories")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("UserPropertyLikes")
-                        .HasForeignKey("PropertyId");
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("UserPropertyLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("UserPropertyLike")
+                        .HasForeignKey("PropertyId")
+                        .HasConstraintName("FK_UserPropertyLikes_Properties")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

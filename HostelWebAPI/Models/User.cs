@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
 // If you have enabled NRTs for your project, then un-comment the following line:
@@ -7,23 +9,26 @@ using System.Collections.Generic;
 
 namespace HostelWebAPI.Models
 {
-    public partial class User
+    public partial class User : IdentityUser
     {
         public User()
         {
-            Comment = new HashSet<Comment>();
-            ReservationHistory = new HashSet<ReservationHistory>();
-            UserPropertyLike = new HashSet<UserPropertyLike>();
+            Comments = new HashSet<Comment>();
+            UserPropertyLikes = new HashSet<UserPropertyLike>();
+            ReservationHistories = new HashSet<ReservationHistory>();
         }
 
-        public string UserId { get; set; }
+        public override string Id { get; set; }
+
+        [MaxLength(100)]
         public string Name { get; set; }
-        public string PhoneNumber { get; set; }
+        public override string PhoneNumber { get; set; }
         public DateTime TimeCreated { get; set; }
 
-        public virtual Owner Owner { get; set; }
-        public virtual ICollection<Comment> Comment { get; set; }
-        public virtual ICollection<ReservationHistory> ReservationHistory { get; set; }
-        public virtual ICollection<UserPropertyLike> UserPropertyLike { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+
+        public virtual ICollection<UserPropertyLike> UserPropertyLikes { get; set; }
+
+        public virtual ICollection<ReservationHistory> ReservationHistories { get; set; }
     }
 }

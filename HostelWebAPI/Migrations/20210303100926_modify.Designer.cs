@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    [Migration("20210223010152_init")]
-    partial class init
+    [Migration("20210303100926_modify")]
+    partial class modify
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,15 +25,13 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("CityId")
                         .HasColumnName("CityID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("CountryId")
                         .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -51,11 +49,10 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("CommentId")
                         .HasColumnName("CommentID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
-                    b.Property<string>("Comment1")
+                    b.Property<string>("CommentString")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Comment")
@@ -66,9 +63,8 @@ namespace HostelWebAPI.Migrations
                     b.Property<string>("PropertyId")
                         .IsRequired()
                         .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<DateTime>("TimeCreated")
                         .ValueGeneratedOnAdd()
@@ -83,9 +79,8 @@ namespace HostelWebAPI.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnName("UserID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
 
                     b.HasKey("CommentId");
 
@@ -100,9 +95,8 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("CountryId")
                         .HasColumnName("CountryID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("CountryName")
                         .IsRequired()
@@ -129,9 +123,8 @@ namespace HostelWebAPI.Migrations
                     b.Property<string>("PropertyId")
                         .IsRequired()
                         .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -143,28 +136,6 @@ namespace HostelWebAPI.Migrations
                     b.HasIndex("PropertyId");
 
                     b.ToTable("Image");
-                });
-
-            modelBuilder.Entity("HostelWebAPI.Models.Owner", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnName("UserID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<string>("PassportNumber")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(20)")
-                        .HasDefaultValueSql("('default passport')")
-                        .HasMaxLength(20)
-                        .IsUnicode(false);
-
-                    b.HasKey("UserId")
-                        .HasName("PK_Owners");
-
-                    b.ToTable("Owner");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.PaymentStatus", b =>
@@ -189,9 +160,8 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("PropertyId")
                         .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Description")
                         .ValueGeneratedOnAdd()
@@ -215,9 +185,7 @@ namespace HostelWebAPI.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnName("OwnerID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("money");
@@ -226,10 +194,9 @@ namespace HostelWebAPI.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnName("PropertyTypeID")
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("nvarchar(50)")
                         .HasDefaultValueSql("((1))")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasMaxLength(50);
 
                     b.Property<double>("Rating")
                         .ValueGeneratedOnAdd()
@@ -259,16 +226,14 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("PropertyId")
                         .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("CityId")
                         .IsRequired()
                         .HasColumnName("CityID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(50)")
@@ -300,9 +265,8 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("PropertyTypeId")
                         .HasColumnName("PropertyTypeID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -318,16 +282,14 @@ namespace HostelWebAPI.Migrations
                 {
                     b.Property<string>("CommentId")
                         .HasColumnName("CommentID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("ReplyToCommentId")
                         .IsRequired()
                         .HasColumnName("ReplyToCommentID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.HasKey("CommentId")
                         .HasName("PK_Replies");
@@ -360,11 +322,9 @@ namespace HostelWebAPI.Migrations
                         .IsUnicode(false);
 
                     b.Property<string>("PropertyId")
-                        .IsRequired()
                         .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("ReservationStatusId")
                         .IsRequired()
@@ -389,10 +349,9 @@ namespace HostelWebAPI.Migrations
                         .HasColumnType("money");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnName("UserID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450)
                         .IsUnicode(false);
 
                     b.HasKey("ReservationId")
@@ -429,62 +388,227 @@ namespace HostelWebAPI.Migrations
 
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnName("UserID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValueSql("(N'Default name')")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValueSql("(N'default phone')")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TimeCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
+                        .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
-                    b.ToTable("User");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
-            modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnName("UserID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PropertyId")
-                        .HasColumnName("PropertyID")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "PropertyId")
-                        .HasName("PK_UserPropertyLikes");
+                    b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("PropertyId");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("UserPropertyLike");
+                    b.ToTable("AspNetUserRoles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("HostelWebAPI.Models.Owner", b =>
+                {
+                    b.HasBaseType("HostelWebAPI.Models.User");
+
+                    b.Property<string>("PassportNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("Owner");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.City", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Country", "Country")
-                        .WithMany("City")
+                        .WithMany("Cities")
                         .HasForeignKey("CountryId")
                         .HasConstraintName("FK_Cities_Countries")
                         .IsRequired();
@@ -493,46 +617,37 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.Comment", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("Comment")
+                        .WithMany("Comments")
                         .HasForeignKey("PropertyId")
                         .HasConstraintName("FK_Comments_Properties")
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("Comment")
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK_Comments_Users")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.Image", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("Image")
+                        .WithMany("Images")
                         .HasForeignKey("PropertyId")
                         .HasConstraintName("FK_Images_Properties")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HostelWebAPI.Models.Owner", b =>
-                {
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithOne("Owner")
-                        .HasForeignKey("HostelWebAPI.Models.Owner", "UserId")
-                        .HasConstraintName("FK_Owners_Users")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.Property", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Owner", "Owner")
-                        .WithMany("Property")
+                        .WithMany("Properties")
                         .HasForeignKey("OwnerId")
-                        .HasConstraintName("FK_Properties_Owners")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.PropertyType", "PropertyType")
-                        .WithMany("Property")
+                        .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
                         .HasConstraintName("FK_Properties_PropertyTypes")
                         .IsRequired();
@@ -541,7 +656,7 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.PropertyAddress", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.City", "City")
-                        .WithMany("PropertyAddress")
+                        .WithMany("PropertyAddresses")
                         .HasForeignKey("CityId")
                         .HasConstraintName("FK_RoomAddresses_Cities")
                         .IsRequired();
@@ -562,7 +677,7 @@ namespace HostelWebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.Comment", "ReplyToComment")
-                        .WithMany("ReplyReplyToComment")
+                        .WithMany("ReplyReplyToComments")
                         .HasForeignKey("ReplyToCommentId")
                         .HasConstraintName("FK_Replies_Comments1")
                         .IsRequired();
@@ -571,42 +686,75 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.ReservationHistory", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.PaymentStatus", "PaymentStatus")
-                        .WithMany("ReservationHistory")
+                        .WithMany("ReservationHistories")
                         .HasForeignKey("PaymentStatusId")
                         .HasConstraintName("FK_ReservationHistories_PaymentStatus")
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("ReservationHistory")
+                        .WithMany("ReservationHistories")
                         .HasForeignKey("PropertyId")
-                        .HasConstraintName("FK_ReservationHistories_Properties")
-                        .IsRequired();
+                        .HasConstraintName("FK_ReservationHistories_Properties");
 
                     b.HasOne("HostelWebAPI.Models.ReservationStatus", "ReservationStatus")
-                        .WithMany("ReservationHistory")
+                        .WithMany("ReservationHistories")
                         .HasForeignKey("ReservationStatusId")
                         .HasConstraintName("FK_ReservationHistories_ReservationStatus")
                         .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("ReservationHistory")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK_ReservationHistories_Users")
+                        .WithMany("ReservationHistories")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("UserPropertyLike")
-                        .HasForeignKey("PropertyId")
-                        .HasConstraintName("FK_UserPropertyLikes_Properties")
+                    b.HasOne("HostelWebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("HostelWebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("UserPropertyLike")
+                    b.HasOne("HostelWebAPI.Models.User", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("FK_UserPropertyLikes_Users")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("HostelWebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

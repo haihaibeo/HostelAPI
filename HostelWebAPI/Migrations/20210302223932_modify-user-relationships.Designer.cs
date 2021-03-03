@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210302223932_modify-user-relationships")]
+    partial class modifyuserrelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -320,6 +322,7 @@ namespace HostelWebAPI.Migrations
                         .IsUnicode(false);
 
                     b.Property<string>("PropertyId")
+                        .IsRequired()
                         .HasColumnName("PropertyID")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -347,9 +350,10 @@ namespace HostelWebAPI.Migrations
                         .HasColumnType("money");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnName("UserID")
-                        .HasColumnType("nvarchar(450)")
-                        .HasMaxLength(450)
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
                         .IsUnicode(false);
 
                     b.HasKey("ReservationId")
@@ -360,8 +364,6 @@ namespace HostelWebAPI.Migrations
                     b.HasIndex("PropertyId");
 
                     b.HasIndex("ReservationStatusId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ReservationHistory");
                 });
@@ -464,25 +466,23 @@ namespace HostelWebAPI.Migrations
 
             modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
                 {
-                    b.Property<string>("UserPropertyId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                    b.Property<string>("UserId")
+                        .HasColumnName("UserID")
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.Property<string>("PropertyId")
+                        .HasColumnName("PropertyID")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)")
-                        .HasMaxLength(450);
-
-                    b.HasKey("UserPropertyId");
+                    b.HasKey("UserId", "PropertyId")
+                        .HasName("PK_UserPropertyLikes");
 
                     b.HasIndex("PropertyId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserPropertyLikes");
+                    b.ToTable("UserPropertyLike");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -715,29 +715,23 @@ namespace HostelWebAPI.Migrations
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
                         .WithMany("ReservationHistories")
                         .HasForeignKey("PropertyId")
-                        .HasConstraintName("FK_ReservationHistories_Properties");
+                        .HasConstraintName("FK_ReservationHistories_Properties")
+                        .IsRequired();
 
                     b.HasOne("HostelWebAPI.Models.ReservationStatus", "ReservationStatus")
                         .WithMany("ReservationHistories")
                         .HasForeignKey("ReservationStatusId")
                         .HasConstraintName("FK_ReservationHistories_ReservationStatus")
                         .IsRequired();
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("ReservationHistories")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("UserPropertyLikes")
-                        .HasForeignKey("PropertyId");
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("UserPropertyLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("UserPropertyLike")
+                        .HasForeignKey("PropertyId")
+                        .HasConstraintName("FK_UserPropertyLikes_Properties")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

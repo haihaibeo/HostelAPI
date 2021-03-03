@@ -11,7 +11,7 @@ namespace HostelWebAPI.Migrations
                 name: "Country",
                 columns: table => new
                 {
-                    CountryID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    CountryID = table.Column<string>(maxLength: 50, nullable: false),
                     CountryName = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -35,7 +35,7 @@ namespace HostelWebAPI.Migrations
                 name: "PropertyType",
                 columns: table => new
                 {
-                    PropertyTypeID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    PropertyTypeID = table.Column<string>(maxLength: 50, nullable: false),
                     Type = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
@@ -56,26 +56,12 @@ namespace HostelWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    UserID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    Name = table.Column<string>(maxLength: 50, nullable: false, defaultValueSql: "(N'Default name')"),
-                    PhoneNumber = table.Column<string>(maxLength: 50, nullable: false, defaultValueSql: "(N'default phone')"),
-                    TimeCreated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.UserID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "City",
                 columns: table => new
                 {
-                    CityID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    CityID = table.Column<string>(maxLength: 50, nullable: false),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
-                    CountryId = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                    CountryId = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,47 +75,23 @@ namespace HostelWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Owner",
-                columns: table => new
-                {
-                    UserID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    PassportNumber = table.Column<string>(unicode: false, maxLength: 20, nullable: false, defaultValueSql: "('default passport')")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Owners", x => x.UserID);
-                    table.ForeignKey(
-                        name: "FK_Owners_Users",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Property",
                 columns: table => new
                 {
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false),
                     Name = table.Column<string>(maxLength: 50, nullable: false, defaultValueSql: "(N'PropertyName')"),
                     Description = table.Column<string>(maxLength: 100, nullable: true, defaultValueSql: "(N'Property Discription')"),
                     Introduction = table.Column<string>(maxLength: 200, nullable: true, defaultValueSql: "(N'Property Introduction')"),
-                    PropertyTypeID = table.Column<string>(unicode: false, maxLength: 50, nullable: false, defaultValueSql: "((1))"),
+                    PropertyTypeID = table.Column<string>(maxLength: 50, nullable: false, defaultValueSql: "((1))"),
                     Rating = table.Column<double>(nullable: false, defaultValueSql: "((5.0))"),
                     TimeCreated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
                     TimeUpdated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
-                    OwnerID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    OwnerID = table.Column<string>(maxLength: 50, nullable: false),
                     PricePerNight = table.Column<decimal>(type: "money", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Property", x => x.PropertyID);
-                    table.ForeignKey(
-                        name: "FK_Properties_Owners",
-                        column: x => x.OwnerID,
-                        principalTable: "Owner",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Properties_PropertyTypes",
                         column: x => x.PropertyTypeID,
@@ -142,9 +104,9 @@ namespace HostelWebAPI.Migrations
                 name: "Comment",
                 columns: table => new
                 {
-                    CommentID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    UserID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    CommentID = table.Column<string>(maxLength: 50, nullable: false),
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false),
+                    UserID = table.Column<string>(maxLength: 450, nullable: false),
                     Comment = table.Column<string>(maxLength: 200, nullable: false, defaultValueSql: "(N'Default comment')"),
                     TimeCreated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
                     TimeUpdated = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
@@ -158,12 +120,6 @@ namespace HostelWebAPI.Migrations
                         principalTable: "Property",
                         principalColumn: "PropertyID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comments_Users",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,7 +128,7 @@ namespace HostelWebAPI.Migrations
                 {
                     ImageID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
                     Url = table.Column<string>(maxLength: 100, nullable: false),
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false),
                     Alt = table.Column<string>(maxLength: 100, nullable: true)
                 },
                 constraints: table =>
@@ -190,8 +146,8 @@ namespace HostelWebAPI.Migrations
                 name: "PropertyAddress",
                 columns: table => new
                 {
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    CityID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false),
+                    CityID = table.Column<string>(maxLength: 50, nullable: false),
                     StreetName = table.Column<string>(maxLength: 50, nullable: false, defaultValueSql: "(N'Street Name default')"),
                     Number = table.Column<string>(unicode: false, maxLength: 10, nullable: true, defaultValueSql: "('Street number default')"),
                     Description = table.Column<string>(maxLength: 50, nullable: true)
@@ -218,7 +174,7 @@ namespace HostelWebAPI.Migrations
                 columns: table => new
                 {
                     ReservationID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false),
                     UserID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
                     FromDate = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "(getdate())"),
                     ToDate = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "(getdate())"),
@@ -248,12 +204,6 @@ namespace HostelWebAPI.Migrations
                         principalTable: "ReservationStatus",
                         principalColumn: "ReservationStatusID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ReservationHistories_Users",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -261,7 +211,7 @@ namespace HostelWebAPI.Migrations
                 columns: table => new
                 {
                     UserID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    PropertyID = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                    PropertyID = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,20 +222,14 @@ namespace HostelWebAPI.Migrations
                         principalTable: "Property",
                         principalColumn: "PropertyID",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserPropertyLikes_Users",
-                        column: x => x.UserID,
-                        principalTable: "User",
-                        principalColumn: "UserID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Reply",
                 columns: table => new
                 {
-                    CommentID = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
-                    ReplyToCommentID = table.Column<string>(unicode: false, maxLength: 50, nullable: false)
+                    CommentID = table.Column<string>(maxLength: 50, nullable: false),
+                    ReplyToCommentID = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -315,19 +259,9 @@ namespace HostelWebAPI.Migrations
                 column: "PropertyID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_UserID",
-                table: "Comment",
-                column: "UserID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Image_PropertyID",
                 table: "Image",
                 column: "PropertyID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Property_OwnerID",
-                table: "Property",
-                column: "OwnerID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Property_PropertyTypeID",
@@ -358,11 +292,6 @@ namespace HostelWebAPI.Migrations
                 name: "IX_ReservationHistory_ReservationStatusID",
                 table: "ReservationHistory",
                 column: "ReservationStatusID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReservationHistory_UserID",
-                table: "ReservationHistory",
-                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPropertyLike_PropertyID",
@@ -406,13 +335,7 @@ namespace HostelWebAPI.Migrations
                 name: "Property");
 
             migrationBuilder.DropTable(
-                name: "Owner");
-
-            migrationBuilder.DropTable(
                 name: "PropertyType");
-
-            migrationBuilder.DropTable(
-                name: "User");
         }
     }
 }
