@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace HostelWebAPI.DTOs
 {
-    public class ReturnMsg<T>
+    public class ReturnMsg
     {
-        public ReturnMsg(T errors, T messages)
+        public ReturnMsg(object errors, object messages)
         {
             Errors = errors;
             Messages = messages;
         }
-        public T Errors { get; set; }
-        public T Messages { get; set; }
+        public object Errors { get; set; }
+        public object Messages { get; set; }
     }
 }
