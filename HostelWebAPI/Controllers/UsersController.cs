@@ -1,5 +1,4 @@
-﻿using HostelWebAPI.DTOs;
-using HostelWebAPI.Models;
+﻿using HostelWebAPI.Models;
 using HostelWebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,15 +28,19 @@ namespace HostelWebAPI.Controllers
         private readonly SignInManager<User> signInManager;
         private readonly ITokenService tokenService;
 
+        /// <summary>
+        /// register user
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [Route("registerUser")]
         public async Task<IActionResult> RegisterUserAsync()
         {
             User user = new User()
             {
-                Name = "User 1",
-                Email = "user1@mail.com",
-                UserName = "user1@mail.com"
+                Name = "User 2",
+                Email = "user2@mail.com",
+                UserName = "user2@mail.com"
             };
 
             var res = await userManager.CreateAsync(user, "password");
@@ -45,21 +48,23 @@ namespace HostelWebAPI.Controllers
             {
                 await userManager.AddToRoleAsync(user, "User");
                 await signInManager.SignInAsync(user, true);
-                return Ok(new ReturnMsg($"User {user.Name} registered!", null));
+                return Ok(new MessageResponse($"User {user.Name} registered!", null));
             }
             foreach (var error in res.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            return Ok(new ReturnMsg("", ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
+            return Ok(new MessageResponse("", ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
         }
 
         [HttpPost]
-        [Authorize(Roles = "User", Policy = "Bearer")]
-        [Route("registerOwner/{id}")]
-        public async Task<IActionResult> RegisterOwnerAsync([FromRoute]string id)
+        [Authorize]
+        [Route("registerOwner")]
+        public async Task<IActionResult> RegisterOwnerAsync()
         {
-            var user = await userManager.FindByIdAsync(id);
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+
             if(user != null)
             {
                 userManager.AddToRoleAsync(user, "Owner").Wait();
@@ -68,19 +73,20 @@ namespace HostelWebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = AppRoles.Owner)]
         [Route("test-authen")]
         public async Task<object> Test()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var user = await userManager.FindByEmailAsync(email);
+            var role = await userManager.GetRolesAsync(user);
             return user.UserName;
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] LoginFormDTO payload)
+        public async Task<IActionResult> Authenticate([FromBody] LoginRequest payload)
         {
             if (ModelState.IsValid) {
                 var result = await signInManager.PasswordSignInAsync(payload.Email, payload.Password, true, false);
@@ -89,7 +95,7 @@ namespace HostelWebAPI.Controllers
                     var user = await userManager.FindByEmailAsync(payload.Email);
                     var roles = await userManager.GetRolesAsync(user);
                     var token = tokenService.TokenGenerator(user, roles);
-                    return Ok(new ReturnTokenDTO(user.Id, token));
+                    return Ok(new TokenResponse(user.Id, token));
                 }
             }
             return BadRequest("Something's wrong");

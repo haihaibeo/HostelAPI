@@ -49,7 +49,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<Property> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return ctx.Property.SingleOrDefaultAsync(p => p.PropertyId == id);
         }
 
         public Task<int> SaveChangeAsync()

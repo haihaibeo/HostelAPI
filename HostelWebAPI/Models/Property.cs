@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,7 @@ namespace HostelWebAPI.Models
             Images = new HashSet<Image>();
             ReservationHistories = new HashSet<ReservationHistory>();
             UserPropertyLikes = new HashSet<UserPropertyLike>();
+            PropertyServices = new HashSet<PropertyService>();
         }
 
         [Key]
@@ -39,7 +41,11 @@ namespace HostelWebAPI.Models
         [StringLength(50)]
         public string PropertyTypeId { get; set; }
 
-        public double Rating { get; set; }
+        [DefaultValue(0)]
+        public int TotalReview { get; set; }
+
+        [DefaultValue(0)]
+        public int TotalStar { get; set; }
 
         [Column(TypeName = "datetime")]
         public DateTime TimeCreated { get; set; }
@@ -69,5 +75,7 @@ namespace HostelWebAPI.Models
         public virtual ICollection<ReservationHistory> ReservationHistories { get; set; }
 
         public virtual ICollection<UserPropertyLike> UserPropertyLikes { get; set; }
+
+        public virtual ICollection<PropertyService> PropertyServices { get; set; }
     }
 }

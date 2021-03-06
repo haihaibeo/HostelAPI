@@ -48,6 +48,7 @@ namespace HostelWebAPI
             services.AddScoped<IDbRepo, DbRepo>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddControllers().AddNewtonsoftJson();
+            services.AddSwaggerGen();
 
             // ==== Add JWT Authentication ==== 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear all default claim types
@@ -57,6 +58,7 @@ namespace HostelWebAPI
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    
                 })
                 .AddJwtBearer(cfg =>
                 {
@@ -70,6 +72,11 @@ namespace HostelWebAPI
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AppPolicies.RequiredOwnerRole, policy => policy.RequireRole(new[] { AppRoles.Owner }));
+            });
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -89,14 +96,23 @@ namespace HostelWebAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider isp)
         {
             // Setup roles
-            CreateRoleAsync(isp, Roles.User).Wait();
-            CreateRoleAsync(isp, Roles.Owner).Wait();
-            CreateRoleAsync(isp, Roles.Admin).Wait();
+            CreateRoleAsync(isp, AppRoles.User).Wait();
+            CreateRoleAsync(isp, AppRoles.Owner).Wait();
+            CreateRoleAsync(isp, AppRoles.Admin).Wait();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger(opt =>
+            {
+                //opt.SerializeAsV2 = true;
+            });
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseHttpsRedirection();
 

@@ -23,7 +23,7 @@ namespace HostelWebAPI.Models
         [MaxLength(100)]
         public string Name { get; set; }
         public override string PhoneNumber { get; set; }
-        public DateTime TimeCreated { get; set; }
+        public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<Comment> Comments { get; set; }
 

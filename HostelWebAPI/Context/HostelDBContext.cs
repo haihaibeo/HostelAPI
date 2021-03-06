@@ -105,8 +105,6 @@ namespace HostelWebAPI.Models
 
                 entity.Property(e => e.PropertyTypeId).HasDefaultValueSql("((1))");
 
-                entity.Property(e => e.Rating).HasDefaultValueSql("((5.0))");
-
                 entity.Property(e => e.TimeCreated).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.TimeUpdated).HasDefaultValueSql("(getdate())");

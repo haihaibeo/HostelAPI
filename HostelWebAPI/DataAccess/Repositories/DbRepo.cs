@@ -14,14 +14,24 @@ namespace HostelWebAPI.DataAccess.Repositories
             this.ctx = ctx;
         }
         private readonly HostelDBContext ctx;
-        private PropertyRepo PropertyRepo;
+        private PropertyRepo propertyRepo;
+        private ReservationHistoryRepo reservationHistoryRepo;
 
         public IPropertyRepo Properties
         {
             get
             {
-                if (PropertyRepo == null) PropertyRepo = new PropertyRepo(ctx);
-                return PropertyRepo;
+                if (propertyRepo == null) propertyRepo = new PropertyRepo(ctx);
+                return propertyRepo;
+            }
+        }
+
+        public IReservationHistoryRepo ReservationHistories
+        {
+            get
+            {
+                if (reservationHistoryRepo == null) reservationHistoryRepo = new ReservationHistoryRepo(ctx);
+                return reservationHistoryRepo;
             }
         }
     }

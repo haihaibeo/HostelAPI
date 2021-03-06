@@ -1,5 +1,6 @@
 ﻿using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace HostelWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("api/property")]
     [ApiController]
     public class PropertyController : ControllerBase
     {
@@ -40,6 +42,7 @@ namespace HostelWebAPI.Controllers
 
         // POST api/<PropertyController>
         [HttpPost]
+        [Authorize(Roles = AppRoles.Owner)]
         public void Post([FromBody] string value)
         {
         }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HostelWebAPI.DTOs
+namespace HostelWebAPI
 {
-    public class ReturnMsg
+    public class MessageResponse
     {
-        public ReturnMsg(object errors, object messages)
+        public MessageResponse(object errors, object messages)
         {
             Errors = errors;
             Messages = messages;

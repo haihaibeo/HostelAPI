@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210305223351_property__change_review_count")]
+    partial class property__change_review_count
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,31 +262,6 @@ namespace HostelWebAPI.Migrations
                     b.ToTable("PropertyAddress");
                 });
 
-            modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
-                {
-                    b.Property<string>("PropertyServiceId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("PropertyId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("ServiceId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("PropertyServiceId");
-
-                    b.HasIndex("PropertyId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("PropertyService");
-                });
-
             modelBuilder.Entity("HostelWebAPI.Models.PropertyType", b =>
                 {
                     b.Property<string>("PropertyTypeId")
@@ -408,21 +385,6 @@ namespace HostelWebAPI.Migrations
                     b.HasKey("ReservationStatusId");
 
                     b.ToTable("ReservationStatus");
-                });
-
-            modelBuilder.Entity("HostelWebAPI.Models.Service", b =>
-                {
-                    b.Property<string>("ServiceId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("ServiceName")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("ServiceId");
-
-                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>
@@ -727,21 +689,6 @@ namespace HostelWebAPI.Migrations
                         .WithOne("PropertyAddress")
                         .HasForeignKey("HostelWebAPI.Models.PropertyAddress", "PropertyId")
                         .HasConstraintName("FK_RoomAddresses_Properties")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
-                {
-                    b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("PropertyServices")
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HostelWebAPI.Models.Service", "Service")
-                        .WithMany("PropertyServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

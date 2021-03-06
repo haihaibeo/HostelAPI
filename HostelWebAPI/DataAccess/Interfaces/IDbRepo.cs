@@ -9,5 +9,6 @@ namespace HostelWebAPI.DataAccess.Interfaces
     public interface IDbRepo
     {
         IPropertyRepo Properties { get; }
+        IReservationHistoryRepo ReservationHistories { get; }
     }
 }
