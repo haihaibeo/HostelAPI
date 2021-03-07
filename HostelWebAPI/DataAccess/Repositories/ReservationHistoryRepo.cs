@@ -36,7 +36,6 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public IEnumerable<ReservationHistory> GetAll()
