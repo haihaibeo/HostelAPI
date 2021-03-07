@@ -23,6 +23,14 @@ namespace HostelWebAPI.Controllers
             this.repo = repo;
         }
 
+        public class PropertyViewResponse
+        {
+            public PropertyViewResponse(Models.Property p, Models.Owner o)
+            {
+
+            }
+        }
+
         // GET: api/<PropertyController>
         [HttpGet]
         public async Task<IActionResult> Get()

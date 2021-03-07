@@ -15,10 +15,11 @@ namespace HostelWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    [Produces("application/json")]
+    public class UserController : ControllerBase
     {
 
-        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;

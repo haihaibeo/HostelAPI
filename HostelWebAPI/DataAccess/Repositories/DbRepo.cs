@@ -16,6 +16,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         private readonly HostelDBContext ctx;
         private PropertyRepo propertyRepo;
         private ReservationHistoryRepo reservationHistoryRepo;
+        private CityRepo cityRepo;
 
         public IPropertyRepo Properties
         {
@@ -32,6 +33,15 @@ namespace HostelWebAPI.DataAccess.Repositories
             {
                 if (reservationHistoryRepo == null) reservationHistoryRepo = new ReservationHistoryRepo(ctx);
                 return reservationHistoryRepo;
+            }
+        }
+
+        public ICityRepo Cities
+        {
+            get
+            {
+                if (cityRepo == null) cityRepo = new CityRepo(ctx);
+                return cityRepo;
             }
         }
     }
