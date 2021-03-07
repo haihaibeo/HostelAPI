@@ -9,40 +9,16 @@ namespace HostelWebAPI.DataAccess.Repositories
 {
     public class DbRepo : IDbRepo
     {
-        public DbRepo(HostelDBContext ctx)
+        public DbRepo(IPropertyRepo Properties, IReservationHistoryRepo ReservationHistories, ICityRepo Cities)
         {
-            this.ctx = ctx;
+            this.Cities = Cities;
+            this.Properties = Properties;
+            this.ReservationHistories = ReservationHistories;
         }
-        private readonly HostelDBContext ctx;
-        private PropertyRepo propertyRepo;
-        private ReservationHistoryRepo reservationHistoryRepo;
-        private CityRepo cityRepo;
+        public IPropertyRepo Properties { get; }
 
-        public IPropertyRepo Properties
-        {
-            get
-            {
-                if (propertyRepo == null) propertyRepo = new PropertyRepo(ctx);
-                return propertyRepo;
-            }
-        }
+        public IReservationHistoryRepo ReservationHistories { get; }
 
-        public IReservationHistoryRepo ReservationHistories
-        {
-            get
-            {
-                if (reservationHistoryRepo == null) reservationHistoryRepo = new ReservationHistoryRepo(ctx);
-                return reservationHistoryRepo;
-            }
-        }
-
-        public ICityRepo Cities
-        {
-            get
-            {
-                if (cityRepo == null) cityRepo = new CityRepo(ctx);
-                return cityRepo;
-            }
-        }
+        public ICityRepo Cities { get; }
     }
 }

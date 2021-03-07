@@ -47,6 +47,9 @@ namespace HostelWebAPI
                 .AddDefaultTokenProviders();
 
             services.AddScoped<IDbRepo, DbRepo>();
+            services.AddScoped<IPropertyRepo, PropertyRepo>();
+            services.AddScoped<ICityRepo, CityRepo>();
+            services.AddScoped<IReservationHistoryRepo, ReservationHistoryRepo>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c=>
