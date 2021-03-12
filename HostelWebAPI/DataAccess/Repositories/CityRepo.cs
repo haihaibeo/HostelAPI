@@ -54,7 +54,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<int> SaveChangeAsync()
         {
-            throw new NotImplementedException();
+            return ctx.SaveChangesAsync();
         }
 
         public void Update(City entity)

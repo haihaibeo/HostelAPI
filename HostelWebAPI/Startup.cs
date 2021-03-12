@@ -30,12 +30,16 @@ namespace HostelWebAPI
         {
             Configuration = configuration;
         }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(opt => opt.AddPolicy(
+                MyAllowSpecificOrigins,
+                builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
+            );
 
             services.AddDbContext<HostelDBContext>(options =>
             {
@@ -51,6 +55,8 @@ namespace HostelWebAPI
             services.AddScoped<ICityRepo, CityRepo>();
             services.AddScoped<IReservationHistoryRepo, ReservationHistoryRepo>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IPropertyTypeRepo, PropertyTypeRepo>();
+
             services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c=>
             {
@@ -147,12 +153,15 @@ namespace HostelWebAPI
                 opt.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseExceptionHandler("/error");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

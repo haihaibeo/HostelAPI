@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,14 @@ namespace HostelWebAPI.Models
         [Required]
         [StringLength(50)]
         public string Type { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        [DefaultValue("https://picsum.photos/seed/picsum/500/500")]
+        public string ThumbnailImg { get; set; }
+
+        [StringLength(200)]
+        public string Description { get; set; }
 
         public virtual ICollection<Property> Properties { get; set; }
     }
