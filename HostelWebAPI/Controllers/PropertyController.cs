@@ -25,26 +25,40 @@ namespace HostelWebAPI.Controllers
 
         public class PropertyViewResponse
         {
-            public PropertyViewResponse(Models.Property p, Models.Owner o)
+            public PropertyViewResponse(Models.Property p)
             {
-
+                Property = p;
+                Address = p.PropertyAddress;
+                CityName = p.PropertyAddress.City.Name;
+                PropertyService = p.PropertyService;
             }
+
+            // view repsponse goes here
+            public Property Property { get; set; }
+            public PropertyAddress Address { get; set; }
+            public PropertyService PropertyService { get; set; }
+            public string CityName { get; set; }
         }
 
         // GET: api/<PropertyController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var res = await repo.Properties.GetAllAsync();
-            return Ok(res);
+            var properties = await repo.Properties.GetAllAsync();
+            var resp = properties.Select(p => new PropertyViewResponse(p));
+
+            return Ok(resp);
         }
 
         // GET api/<PropertyController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var res = await repo.Properties.GetByIdAsync(id);
-            if (res != null) return Ok(res);
+            var property = await repo.Properties.GetByIdAsync(id);
+
+            var resp = new PropertyViewResponse(property);
+
+            if (property != null) return Ok(resp);
             else return BadRequest();
         }
 

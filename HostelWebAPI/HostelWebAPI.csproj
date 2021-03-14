@@ -81,6 +81,16 @@
     <Compile Remove="Migrations\20210303101847_modify-UserPropertyLike.Designer.cs" />
     <Compile Remove="Migrations\20210303102156_modify-UserPropertyLike.cs" />
     <Compile Remove="Migrations\20210303102156_modify-UserPropertyLike.Designer.cs" />
+    <Compile Remove="Migrations\20210312145745_add_thumbnImg_mod_uniqe_phone.cs" />
+    <Compile Remove="Migrations\20210312145745_add_thumbnImg_mod_uniqe_phone.Designer.cs" />
+    <Compile Remove="Migrations\20210314223425_add_O2O_PropertyService.cs" />
+    <Compile Remove="Migrations\20210314223425_add_O2O_PropertyService.Designer.cs" />
+    <Compile Remove="Migrations\20210314223542_add_O2O_PropertyService.cs" />
+    <Compile Remove="Migrations\20210314223542_add_O2O_PropertyService.Designer.cs" />
+    <Compile Remove="Migrations\20210314223933_add_O2O_PropertyService.cs" />
+    <Compile Remove="Migrations\20210314223933_add_O2O_PropertyService.Designer.cs" />
+    <Compile Remove="Migrations\20210314224434_add_O2O_PropertyService.cs" />
+    <Compile Remove="Migrations\20210314224434_add_O2O_PropertyService.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210312145959_add_thumbnImg_mod_uniqe_phone")]
+    partial class add_thumbnImg_mod_uniqe_phone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,39 +268,27 @@ namespace HostelWebAPI.Migrations
 
             modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
                 {
-                    b.Property<string>("PropertyId")
-                        .HasColumnName("PropertyId")
+                    b.Property<string>("PropertyServiceId")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<bool>("Breakfast")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<string>("PropertyId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
-                    b.Property<bool>("FreeParking")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<string>("ServiceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
-                    b.Property<bool>("Kitchen")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.HasKey("PropertyServiceId");
 
-                    b.Property<bool>("PetAllowed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.HasIndex("PropertyId");
 
-                    b.Property<bool>("Wifi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.HasIndex("ServiceId");
 
-                    b.HasKey("PropertyId");
-
-                    b.ToTable("PropertyServices");
+                    b.ToTable("PropertyService");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.PropertyType", b =>
@@ -433,6 +423,21 @@ namespace HostelWebAPI.Migrations
                     b.HasKey("ReservationStatusId");
 
                     b.ToTable("ReservationStatus");
+                });
+
+            modelBuilder.Entity("HostelWebAPI.Models.Service", b =>
+                {
+                    b.Property<string>("ServiceId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("ServiceId");
+
+                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>
@@ -748,8 +753,14 @@ namespace HostelWebAPI.Migrations
             modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
                 {
                     b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithOne("PropertyService")
-                        .HasForeignKey("HostelWebAPI.Models.PropertyService", "PropertyId")
+                        .WithMany("PropertyServices")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HostelWebAPI.Models.Service", "Service")
+                        .WithMany("PropertyServices")
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

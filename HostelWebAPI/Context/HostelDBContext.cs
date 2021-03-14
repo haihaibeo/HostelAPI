@@ -31,10 +31,20 @@ namespace HostelWebAPI.Models
         public virtual DbSet<ReservationStatus> ReservationStatus { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<UserPropertyLike> UserPropertyLikes { get; set; }
+        public virtual DbSet<PropertyService> PropertyServices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PropertyService>(entity =>
+            {
+                entity.Property(e => e.Kitchen).HasDefaultValue(false);
+                entity.Property(e => e.PetAllowed).HasDefaultValue(false);
+                entity.Property(e => e.Wifi).HasDefaultValue(false);
+                entity.Property(e => e.FreeParking).HasDefaultValue(false);
+                entity.Property(e => e.Breakfast).HasDefaultValue(false);
+            });
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -42,6 +52,8 @@ namespace HostelWebAPI.Models
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.PhoneNumber).IsUnique();
 
                 entity.HasMany(u => u.UserPropertyLikes)
                 .WithOne(upl => upl.User).OnDelete(DeleteBehavior.Cascade);

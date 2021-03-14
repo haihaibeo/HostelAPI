@@ -18,7 +18,6 @@ namespace HostelWebAPI.Models
             Images = new HashSet<Image>();
             ReservationHistories = new HashSet<ReservationHistory>();
             UserPropertyLikes = new HashSet<UserPropertyLike>();
-            PropertyServices = new HashSet<PropertyService>();
         }
 
         [Key]
@@ -35,6 +34,9 @@ namespace HostelWebAPI.Models
 
         [StringLength(200)]
         public string Introduction { get; set; }
+
+        [StringLength(100)]
+        public string ThumbnailUrl { get; set; }
 
         [Required]
         [Column("PropertyTypeID")]
@@ -68,6 +70,8 @@ namespace HostelWebAPI.Models
 
         public virtual PropertyAddress PropertyAddress { get; set; }
 
+        public virtual PropertyService PropertyService { get; set; }
+
         public virtual ICollection<Comment> Comments { get; set; }
 
         public virtual ICollection<Image> Images { get; set; }
@@ -75,7 +79,5 @@ namespace HostelWebAPI.Models
         public virtual ICollection<ReservationHistory> ReservationHistories { get; set; }
 
         public virtual ICollection<UserPropertyLike> UserPropertyLikes { get; set; }
-
-        public virtual ICollection<PropertyService> PropertyServices { get; set; }
     }
 }

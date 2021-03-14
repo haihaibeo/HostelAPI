@@ -22,6 +22,8 @@ namespace HostelWebAPI.Models
 
         [MaxLength(100)]
         public string Name { get; set; }
+
+        [MaxLength(15)]
         public override string PhoneNumber { get; set; }
         public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
 
