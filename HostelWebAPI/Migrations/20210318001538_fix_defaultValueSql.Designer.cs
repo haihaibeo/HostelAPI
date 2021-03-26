@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210318001538_fix_defaultValueSql")]
+    partial class fix_defaultValueSql
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,7 +245,9 @@ namespace HostelWebAPI.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("Number")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
+                        .HasDefaultValueSql("(N'Number default')")
                         .HasMaxLength(10)
                         .IsUnicode(false);
 

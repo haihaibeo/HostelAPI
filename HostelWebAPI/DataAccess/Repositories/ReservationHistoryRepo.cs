@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HostelWebAPI.DataAccess.Repositories
 {
-    public interface IReservationHistoryRepo : IRepository<ReservationHistory>, IDisposable
+    public interface IReservationHistoryRepo : IRepository<ReservationHistory>
     {
         Task<IEnumerable<ReservationHistory>> GetByPropertyIdAsync(string propertyId);
         Task<IEnumerable<ReservationHistory>> GetByUserIdAsync(string userId);
@@ -32,10 +32,6 @@ namespace HostelWebAPI.DataAccess.Repositories
         public void DeleteById(string id)
         {
             throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
         }
 
         public IEnumerable<ReservationHistory> GetAll()

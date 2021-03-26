@@ -19,9 +19,9 @@
     },
     "HostelWebAPI": {
       "commandName": "Project",
-      "launchBrowser": false,
-      "launchUrl": "api/property",
-      "applicationUrl": "https://localhost:5001;https://localhost:44343;http://localhost:44343",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:5001;https://localhost:44343;http://localhost:44344",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

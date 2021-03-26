@@ -11,11 +11,11 @@ namespace HostelWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CityController : ControllerBase
+    public class CitiesController : ControllerBase
     {
         private readonly IDbRepo repo;
 
-        public CityController(IDbRepo repo)
+        public CitiesController(IDbRepo repo)
         {
             this.repo = repo;
         }
@@ -34,12 +34,12 @@ namespace HostelWebAPI.Controllers
         {
             public CityResponse(Models.City c)
             {
-                CityId = c.CityId;
+                Id = c.CityId;
                 CityName = c.Name;
                 CountryId = c.CountryId;
             }
 
-            public string CityId { get; set; }
+            public string Id { get; set; }
             public string CityName { get; set; }
             public string CountryId { get; set; }
             public string CountryName { get; set; }

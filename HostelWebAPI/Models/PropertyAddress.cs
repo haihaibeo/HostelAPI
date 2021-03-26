@@ -15,20 +15,25 @@ namespace HostelWebAPI.Models
         [Column("PropertyID")]
         [StringLength(50)]
         public string PropertyId { get; set; }
+
         [Required]
         [Column("CityID")]
         [StringLength(50)]
         public string CityId { get; set; }
+
         [Required]
         [StringLength(50)]
         public string StreetName { get; set; }
+
         [StringLength(10)]
         public string Number { get; set; }
+
         [StringLength(50)]
         public string Description { get; set; }
 
         [ForeignKey(nameof(CityId))]
         public virtual City City { get; set; }
+
         [ForeignKey(nameof(PropertyId))]
         public virtual Property Property { get; set; }
     }

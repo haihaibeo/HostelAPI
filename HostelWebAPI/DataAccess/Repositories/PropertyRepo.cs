@@ -51,6 +51,7 @@ namespace HostelWebAPI.DataAccess.Repositories
             return ctx.Property
                 .Include(a => a.PropertyAddress).ThenInclude(b => b.City)
                 .Include(c => c.PropertyService)
+                .Include(d => d.Images)
                 .ToListAsync();
         }
 
@@ -63,7 +64,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<Property> GetByIdAsync(string id)
         {
-            return ctx.Property
+            return ctx.Property.Include(a => a.ReservationHistories)
                 .SingleOrDefaultAsync(p => p.PropertyId == id);
         }
 

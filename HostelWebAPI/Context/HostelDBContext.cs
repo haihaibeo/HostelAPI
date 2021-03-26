@@ -126,22 +126,6 @@ namespace HostelWebAPI.Models
                     .HasForeignKey(d => d.PropertyTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Properties_PropertyTypes");
-
-                //
-                //entity.HasMany(p => p.UserPropertyLikes)
-                //.WithOne(upl => upl.Property).OnDelete(DeleteBehavior.Cascade);
-
-                //entity.HasOne(e => e.PropertyAddress)
-                //.WithOne(pa => pa.Property).OnDelete(DeleteBehavior.Cascade);
-
-                //entity.HasMany(e => e.Comments)
-                //.WithOne(cmt => cmt.Property).OnDelete(DeleteBehavior.Cascade);
-
-                //entity.HasMany(e => e.Images)
-                //.WithOne(img => img.Property).OnDelete(DeleteBehavior.Cascade);
-
-                //entity.HasMany(e => e.ReservationHistories)
-                //.WithOne(rsh => rsh.Property).OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<PropertyAddress>(entity =>
@@ -150,8 +134,8 @@ namespace HostelWebAPI.Models
                     .HasName("PK_RoomAddresses");
 
                 entity.Property(e => e.Number)
-                    .IsUnicode(false)
-                    .HasDefaultValueSql("('Street number default')");
+                    .IsUnicode(false);
+                    //.HasDefaultValueSql("(N'Number default')");
 
                 entity.Property(e => e.StreetName).HasDefaultValueSql("(N'Street Name default')");
 
