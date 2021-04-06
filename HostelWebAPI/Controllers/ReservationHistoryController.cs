@@ -51,8 +51,12 @@ namespace HostelWebAPI.Controllers
             public string PropertyId { get; set; }
             public string FromDate { get; set; }
             public string ToDate { get; set; }
+            public int AdultNum { get; set; }
+            public int ChildrenNum { get; set; }
+            public int InfantNum { get; set; }
         }
 
+        // TODO: Extract to business logic
         [HttpPost]
         [Authorize(Roles = "User, Owner, Admin")]
         public async Task<IActionResult> Reserve([FromBody] ReservationRequest request)
@@ -60,20 +64,30 @@ namespace HostelWebAPI.Controllers
             var from = DateTime.Parse(request.FromDate);
             if (from < DateTime.Today) return BadRequest("Can't choose date in the past");
 
+
             var property = await repo.Properties.GetByIdAsync(request.PropertyId);
-            var reservDatetime1 = await repo.ReservationHistories.GetByPropertyIdAsync(request.PropertyId);
+            if (property == null) return BadRequest("Property does not exist");
+            if (request.AdultNum + request.ChildrenNum > property.MaxPeople) return BadRequest("Exceeded max number of people");
+
+            var to = DateTime.Parse(request.ToDate);
             var reservDatetime = property.ReservationHistories;
 
             if (reservDatetime != null && reservDatetime.Count != 0)
             {
-                var to = DateTime.Parse(request.ToDate);
 
                 foreach (var dt in reservDatetime)
                 {
                     if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Can't book!");
                 }
             }
-
+            var reserve = new ReservationHistory()
+            {
+                FromDate = from,
+                ToDate = to,
+                PaymentStatusId = "1",
+                ReservationStatusId = "1",
+                TotalCost = property.PricePerNight * (request.ChildrenNum + request.AdultNum)
+            };
 
             return Ok("Can book");
         }

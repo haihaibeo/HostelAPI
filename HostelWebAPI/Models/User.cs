@@ -26,6 +26,7 @@ namespace HostelWebAPI.Models
         [MaxLength(15)]
         public override string PhoneNumber { get; set; }
         public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
+        public string ProfileImageUrl { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
 

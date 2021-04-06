@@ -13,11 +13,13 @@ namespace HostelWebAPI.DataAccess.Repositories
             IPropertyRepo Properties, 
             IReservationHistoryRepo ReservationHistories, 
             ICityRepo Cities,
-            IPropertyTypeRepo PropertyTypes
+            IPropertyTypeRepo PropertyTypes,
+            IUserPropertyLikeRepo Likes
             )
         {
             this.Cities = Cities;
             this.PropertyTypes = PropertyTypes;
+            this.Likes = Likes;
             this.Properties = Properties;
             this.ReservationHistories = ReservationHistories;
         }
@@ -25,5 +27,6 @@ namespace HostelWebAPI.DataAccess.Repositories
         public IReservationHistoryRepo ReservationHistories { get; }
         public ICityRepo Cities { get; }
         public IPropertyTypeRepo PropertyTypes { get; }
+        public IUserPropertyLikeRepo Likes { get; }
     }
 }

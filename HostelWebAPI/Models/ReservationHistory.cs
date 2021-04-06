@@ -30,6 +30,12 @@ namespace HostelWebAPI.Models
         [Column(TypeName = "date")]
         public DateTime ToDate { get; set; }
 
+        public int AdultNum { get; set; }
+
+        public int ChildrenNum { get; set; }
+
+        public int InfantNum { get; set; }
+
         [Column(TypeName = "datetime")]
         public DateTime TimeCreated { get; set; }
 

@@ -12,5 +12,6 @@ namespace HostelWebAPI.DataAccess.Interfaces
         IReservationHistoryRepo ReservationHistories { get; }
         ICityRepo Cities { get; }
         IPropertyTypeRepo PropertyTypes { get; }
+        IUserPropertyLikeRepo Likes { get; }
     }
 }

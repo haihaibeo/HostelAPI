@@ -26,7 +26,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         #region Basic CRUD
         public void Add(ReservationHistory entity)
         {
-            throw new NotImplementedException();
+            ctx.ReservationHistory.Add(entity);
         }
 
         public void DeleteById(string id)

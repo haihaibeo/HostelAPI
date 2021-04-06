@@ -109,6 +109,8 @@ namespace HostelWebAPI.Models
 
             modelBuilder.Entity<Property>(entity =>
             {
+                entity.Property(e => e.MaxPeople).HasDefaultValue(1);
+
                 entity.Property(e => e.Description).HasDefaultValueSql("(N'Property Discription')");
 
                 entity.Property(e => e.Introduction).HasDefaultValueSql("(N'Property Introduction')");
@@ -174,6 +176,12 @@ namespace HostelWebAPI.Models
             {
                 entity.HasKey(e => e.ReservationId)
                     .HasName("PK_ReservationHistories");
+
+                entity.Property(e => e.InfantNum).HasDefaultValue(0);
+
+                entity.Property(e => e.AdultNum).HasDefaultValue(1);
+
+                entity.Property(e => e.ChildrenNum).HasDefaultValue(0);
 
                 entity.Property(e => e.ReservationId).IsUnicode(false);
 

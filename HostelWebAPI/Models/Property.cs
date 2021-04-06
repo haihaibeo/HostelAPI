@@ -35,6 +35,9 @@ namespace HostelWebAPI.Models
         [StringLength(200)]
         public string Introduction { get; set; }
 
+        [DefaultValue(1)]
+        public int MaxPeople { get; set; }
+
         [StringLength(100)]
         public string ThumbnailUrl { get; set; }
 

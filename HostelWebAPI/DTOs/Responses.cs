@@ -18,11 +18,12 @@ namespace HostelWebAPI
            
     public partial class TokenResponse
     {
-        public TokenResponse(string userId, string token, string userName)
+        public TokenResponse(string userId, string token, string name, string email)
         {
             UserId = userId;
             Token = token;
-            UserName = userName;
+            Name = name;
+            Email = email;
         }
 
         public TokenResponse(string userId, string token)
@@ -33,7 +34,8 @@ namespace HostelWebAPI
 
         public string UserId { get; set; }
         public string Token { get; set; }
-        public string UserName { get; set; }
+        public string Name { get; set; }
+        public string Email { get; }
     }
 
 
@@ -60,7 +62,10 @@ namespace HostelWebAPI
         {
             if (p.Images != null)
                 Images = p.Images.Select(i => new ImageResponse(i)).ToList();
+
+            MaxPeople = p.MaxPeople;
         }
+        public int MaxPeople { get; set; }
         public IEnumerable<ImageResponse> Images { get; set; }
         public string Introduction { get; set; }
 

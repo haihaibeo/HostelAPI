@@ -68,7 +68,7 @@ namespace HostelWebAPI.Controllers
 
             if(user != null)
             {
-                userManager.AddToRoleAsync(user, "Owner").Wait();
+                userManager.AddToRoleAsync(user, AppRoles.Owner).Wait();
             }
             return Ok();
         }
@@ -96,8 +96,9 @@ namespace HostelWebAPI.Controllers
                     var user = await userManager.FindByEmailAsync(payload.Email);
                     var roles = await userManager.GetRolesAsync(user);
                     var token = tokenService.TokenGenerator(user, roles);
-                    return Ok(new TokenResponse(user.Id, token));
+                    return Ok(new TokenResponse(user.Id, token, user.Name, user.Email));
                 }
+                else return BadRequest();
             }
             return BadRequest("Something's wrong");
         }
