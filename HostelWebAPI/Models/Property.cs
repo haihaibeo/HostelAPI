@@ -32,7 +32,7 @@ namespace HostelWebAPI.Models
         [StringLength(100)]
         public string Description { get; set; }
 
-        [StringLength(200)]
+        [MaxLength(2000)]
         public string Introduction { get; set; }
 
         [DefaultValue(1)]

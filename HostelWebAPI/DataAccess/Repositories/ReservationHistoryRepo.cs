@@ -12,7 +12,9 @@ namespace HostelWebAPI.DataAccess.Repositories
     {
         Task<IEnumerable<ReservationHistory>> GetByPropertyIdAsync(string propertyId);
         Task<IEnumerable<ReservationHistory>> GetByUserIdAsync(string userId);
+        Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int? numOfMonthAhead);
     }
+  
 
     public class ReservationHistoryRepo : IReservationHistoryRepo
     {
@@ -54,6 +56,14 @@ namespace HostelWebAPI.DataAccess.Repositories
             throw new NotImplementedException();
         }
         #endregion
+
+        public Task<List<ReservedDate>> GetReservationSchedule(string propertyId,int? numOfMonthAhead)
+        {
+            if (numOfMonthAhead == null) numOfMonthAhead = 3;
+            var today = DateTime.UtcNow;
+            var reserv = ctx.ReservationHistory.Where(rh => rh.ToDate >= today && rh.PropertyId == propertyId).Select(sch => new ReservedDate(sch)).ToListAsync();
+            return reserv;
+        }
 
         public async Task<IEnumerable<ReservationHistory>> GetByPropertyIdAsync(string propertyId)
         {

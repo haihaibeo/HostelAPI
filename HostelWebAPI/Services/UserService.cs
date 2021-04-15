@@ -27,15 +27,13 @@ namespace HostelWebAPI.Services
 
         public string TokenGenerator(User user, IEnumerable<string> roles)
         {
-            var roleclaims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
+            var roleclaims = roles.Select(r => new Claim("roles", r)).ToArray();
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Email),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("Custome", user.Email)
+                new Claim("email", user.Email),
+                new Claim("name", user.Name),
             };
             claims.AddRange(roleclaims);
 

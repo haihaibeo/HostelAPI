@@ -36,6 +36,16 @@ namespace HostelWebAPI.Controllers
             return Ok(userLikesProp);
         }
 
+        [HttpGet("{propertyId}")]
+        [Authorize]
+        public async Task<IActionResult> Get(string propertyId)
+        {
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+            var like = repo.Likes.GetByPropertyIdAsync(propertyId, user.Id);
+            return Ok(like);
+        }
+
         // POST api/<UserPropertyLikesController>
         [HttpPost("{propertyId}")]
         [Authorize]
@@ -45,7 +55,7 @@ namespace HostelWebAPI.Controllers
             var user = await userManager.FindByEmailAsync(email);
             var property = await repo.Properties.GetByIdAsync(propertyId);
 
-            if (property == null) return NotFound();
+            if (property == null) return NotFound("Room not found");
 
             var didLike = await repo.Likes.GetByPropertyIdAsync(propertyId, user.Id);
 
@@ -60,13 +70,13 @@ namespace HostelWebAPI.Controllers
 
                 repo.Likes.Add(like);
                 await repo.Likes.SaveChangeAsync();
-                return Ok("liked");
+                return Ok(new { Liked = true });
             }
             else
             {
                 repo.Likes.DeleteById(didLike.UserPropertyId);
                 await repo.Likes.SaveChangeAsync();
-                return Ok("unliked");
+                return Ok(new { Liked = false });
             }
         }
     }

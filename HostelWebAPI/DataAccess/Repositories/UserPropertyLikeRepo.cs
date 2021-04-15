@@ -46,7 +46,8 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<UserPropertyLike> GetByPropertyIdAsync(string propertyId, string userId)
         {
-            return ctx.UserPropertyLikes.SingleOrDefaultAsync(upl => upl.UserId == userId && upl.PropertyId == propertyId);
+            var like = ctx.UserPropertyLikes.SingleOrDefaultAsync(upl => upl.UserId == userId && upl.PropertyId == propertyId);
+            return like;
         }
 
         public Task<List<UserPropertyLike>> GetAllByUserIdAsync(string userId)

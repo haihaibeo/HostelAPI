@@ -58,9 +58,25 @@ namespace HostelWebAPI.Controllers
             return Ok(new MessageResponse("", ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
         }
 
+        [HttpGet("{ownerId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetOwnerBasicInfo([FromRoute] string ownerId)
+        {
+            try
+            {
+                var owner = await userManager.FindByIdAsync(ownerId);
+                if (owner == null) return NotFound(new { message = "User not found" });
+                return Ok(owner);
+            }
+            catch(Exception e)
+            {
+                throw (e);
+            }
+        }
+
         [HttpPost]
         [Authorize]
-        [Route("registerOwner")]
+        [Route("register-owner")]
         public async Task<IActionResult> RegisterOwnerAsync()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
@@ -71,6 +87,21 @@ namespace HostelWebAPI.Controllers
                 userManager.AddToRoleAsync(user, AppRoles.Owner).Wait();
             }
             return Ok();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = AppRoles.Owner)]
+        [Route("unregister-owner")]
+        public async Task<IActionResult> RemoveOwnerRole()
+        {
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+            if(user != null)
+            {
+                var res = await userManager.RemoveFromRoleAsync(user, AppRoles.Owner);
+                if (res.Succeeded) return Ok();
+            }
+            return BadRequest();
         }
 
         [HttpGet]
@@ -98,9 +129,17 @@ namespace HostelWebAPI.Controllers
                     var token = tokenService.TokenGenerator(user, roles);
                     return Ok(new TokenResponse(user.Id, token, user.Name, user.Email));
                 }
-                else return BadRequest();
+                else return NotFound(new { message = "Login or password did not match" });
             }
             return BadRequest("Something's wrong");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("validate-token")]
+        public IActionResult ValidateToken()
+        {
+            return Ok();
         }
     }
 }

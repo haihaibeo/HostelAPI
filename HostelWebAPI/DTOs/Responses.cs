@@ -38,6 +38,16 @@ namespace HostelWebAPI
         public string Email { get; }
     }
 
+    public class ReservedDate
+    {
+        public ReservedDate(Models.ReservationHistory res)
+        {
+            FromDate = res.FromDate.ToUniversalTime();
+            ToDate = res.ToDate.ToUniversalTime();
+        }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+    }
 
     public class ImageResponse
     {
@@ -58,19 +68,22 @@ namespace HostelWebAPI
     public class PropertyResponse : PropertyViewResponse
     {
 
-        public PropertyResponse(Models.Property p) : base(p)
+        public PropertyResponse(Models.Property p, IEnumerable<ReservedDate> reservedDates) : base(p)
         {
             if (p.Images != null)
                 Images = p.Images.Select(i => new ImageResponse(i)).ToList();
-
+            Introduction = p.Introduction;
             MaxPeople = p.MaxPeople;
+            ReservedDates = reservedDates;
         }
         public int MaxPeople { get; set; }
-        public IEnumerable<ImageResponse> Images { get; set; }
+        public IEnumerable<ImageResponse>? Images { get; set; }
         public string Introduction { get; set; }
+        public bool? Liked { get; set; }
 
-        // view repsponse goes here
-        public IEnumerable<Models.Comment> Comments { get; set; }
+        public IEnumerable<Models.Comment>? Comments { get; set; }
+        public IEnumerable<ReservedDate>? ReservedDates { get; set; }
+        public IEnumerable<DateTime>? DaysOff { get; set; }
     }
 
     /// <summary>
@@ -99,7 +112,7 @@ namespace HostelWebAPI
             {
                 if (s.Breakfast == true) services.Add(nameof(s.Breakfast));
                 if (s.Kitchen == true) services.Add(nameof(s.Kitchen));
-                if (s.PetAllowed == true) services.Add(nameof(s.PetAllowed));
+                if (s.PetAllowed == true) services.Add("Pet");
                 if (s.Wifi == true) services.Add(nameof(s.Wifi));
             }
 
