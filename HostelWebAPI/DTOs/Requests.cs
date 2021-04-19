@@ -47,9 +47,14 @@ namespace HostelWebAPI
         public string CityId { get; set; }
         public IEnumerable<string> ServiceIds { get; set; }
     }
-
-    public partial class PropertyResponseViewResponse
+    
+    public class ReservationRequest
     {
-
+        public string PropertyId { get; set; }
+        public string FromDate { get; set; }
+        public string ToDate { get; set; }
+        public int AdultNum { get; set; }
+        public int ChildrenNum { get; set; }
+        public int InfantNum { get; set; }
     }
 }

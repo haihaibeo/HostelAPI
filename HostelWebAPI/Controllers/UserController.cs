@@ -105,7 +105,7 @@ namespace HostelWebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = AppRoles.Owner)]
+        [Authorize(Roles = "User")]
         [Route("test-authen")]
         public async Task<object> Test()
         {

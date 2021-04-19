@@ -16,6 +16,7 @@ namespace HostelWebAPI.Controllers
     [Produces("application/json")]
     [Route("api/properties")]
     [ApiController]
+    [Authorize]
     public class PropertiesController : ControllerBase
     {
         private readonly IDbRepo repo;
@@ -29,6 +30,7 @@ namespace HostelWebAPI.Controllers
 
         // GET: api/<PropertyController>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] string typeId)
         {
             var properties = await repo.Properties.GetAllAsync();
@@ -44,6 +46,7 @@ namespace HostelWebAPI.Controllers
 
         // GET api/<PropertyController>/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(string id)
         {
             var property = await repo.Properties.GetByIdAsync(id);
@@ -53,7 +56,7 @@ namespace HostelWebAPI.Controllers
 
             var resp = new PropertyResponse(property, schedules);
 
-            if (User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
                 var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
                 var user = await userManager.FindByEmailAsync(email);

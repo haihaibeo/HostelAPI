@@ -109,6 +109,10 @@ namespace HostelWebAPI.Models
 
             modelBuilder.Entity<Property>(entity =>
             {
+                entity.Property(e => e.CleaningFee).HasDefaultValue(0);
+
+                entity.Property(e => e.ServiceFee).HasDefaultValue(0);
+
                 entity.Property(e => e.MaxPeople).HasDefaultValue(1);
 
                 entity.Property(e => e.Description).HasDefaultValueSql("(N'Property Discription')");

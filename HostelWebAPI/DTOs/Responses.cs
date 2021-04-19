@@ -75,11 +75,15 @@ namespace HostelWebAPI
             Introduction = p.Introduction;
             MaxPeople = p.MaxPeople;
             ReservedDates = reservedDates;
+            ServiceFee = p.ServiceFee;
+            CleaningFee = p.CleaningFee;
         }
         public int MaxPeople { get; set; }
         public IEnumerable<ImageResponse>? Images { get; set; }
         public string Introduction { get; set; }
         public bool? Liked { get; set; }
+        public decimal ServiceFee { get; set; }
+        public decimal CleaningFee { get; set; }
 
         public IEnumerable<Models.Comment>? Comments { get; set; }
         public IEnumerable<ReservedDate>? ReservedDates { get; set; }

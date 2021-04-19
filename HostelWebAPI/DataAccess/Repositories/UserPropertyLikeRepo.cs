@@ -46,7 +46,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<UserPropertyLike> GetByPropertyIdAsync(string propertyId, string userId)
         {
-            var like = ctx.UserPropertyLikes.SingleOrDefaultAsync(upl => upl.UserId == userId && upl.PropertyId == propertyId);
+            var like = ctx.UserPropertyLikes.FirstOrDefaultAsync(upl => upl.UserId == userId && upl.PropertyId == propertyId);
             return like;
         }
 
@@ -71,6 +71,22 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
 
         public void Update(UserPropertyLike entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<UserPropertyLike> AddAsync(UserPropertyLike entity)
+        {
+            var upl = await ctx.UserPropertyLikes.AddAsync(entity);
+            return upl.Entity;
+        }
+
+        public Task<UserPropertyLike> UpdateAsync(UserPropertyLike entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserPropertyLike> DeleteByIdAsync(string id)
         {
             throw new NotImplementedException();
         }

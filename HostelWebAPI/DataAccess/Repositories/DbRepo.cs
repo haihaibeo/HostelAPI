@@ -9,17 +9,21 @@ namespace HostelWebAPI.DataAccess.Repositories
 {
     public class DbRepo : IDbRepo
     {
+        private readonly HostelDBContext ctx;
+
         public DbRepo(
             IPropertyRepo Properties, 
             IReservationHistoryRepo ReservationHistories, 
             ICityRepo Cities,
             IPropertyTypeRepo PropertyTypes,
-            IUserPropertyLikeRepo Likes
+            IUserPropertyLikeRepo Likes,
+            HostelDBContext ctx
             )
         {
             this.Cities = Cities;
             this.PropertyTypes = PropertyTypes;
             this.Likes = Likes;
+            this.ctx = ctx;
             this.Properties = Properties;
             this.ReservationHistories = ReservationHistories;
         }
@@ -28,5 +32,10 @@ namespace HostelWebAPI.DataAccess.Repositories
         public ICityRepo Cities { get; }
         public IPropertyTypeRepo PropertyTypes { get; }
         public IUserPropertyLikeRepo Likes { get; }
+
+        public Task<int> SaveChangesAsync()
+        {
+            return ctx.SaveChangesAsync();
+        }
     }
 }

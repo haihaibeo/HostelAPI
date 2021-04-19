@@ -65,6 +65,12 @@ namespace HostelWebAPI.Models
         [Column(TypeName = "money")]
         public decimal PricePerNight { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal ServiceFee { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal CleaningFee { get; set; }
+
         [ForeignKey(nameof(OwnerId))]
         public virtual Owner Owner { get; set; }
 

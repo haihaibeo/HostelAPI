@@ -28,7 +28,17 @@ namespace HostelWebAPI.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Property> AddAsync(Property entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteById(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Property> DeleteByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -86,6 +96,11 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
 
         public void Update(Property entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Property> UpdateAsync(Property entity)
         {
             throw new NotImplementedException();
         }

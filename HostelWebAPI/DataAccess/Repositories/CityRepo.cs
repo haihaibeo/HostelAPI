@@ -27,7 +27,17 @@ namespace HostelWebAPI.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<City> AddAsync(City entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteById(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<City> DeleteByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -58,6 +68,11 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
 
         public void Update(City entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<City> UpdateAsync(City entity)
         {
             throw new NotImplementedException();
         }

@@ -26,6 +26,11 @@ namespace HostelWebAPI.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<PropertyType> AddAsync(PropertyType entity)
+        {
+            throw new NotImplementedException();
+        }
+
         // IMPORTANT NOTE: Use .Include() to enable eagle loading
         public async Task<int> CountAsync(string propertyTypeId)
         {
@@ -35,6 +40,11 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
 
         public void DeleteById(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PropertyType> DeleteByIdAsync(string id)
         {
             throw new NotImplementedException();
         }
@@ -65,6 +75,11 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
 
         public void Update(PropertyType entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PropertyType> UpdateAsync(PropertyType entity)
         {
             throw new NotImplementedException();
         }

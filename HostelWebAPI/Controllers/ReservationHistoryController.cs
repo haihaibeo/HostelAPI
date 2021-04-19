@@ -14,18 +14,20 @@ namespace HostelWebAPI.Controllers
 {
     [Route("api/reservations")]
     [ApiController]
+    [Authorize]
     public class ReservationHistoryController : ControllerBase
     {
         private readonly IDbRepo repo;
         private readonly UserManager<User> userManager;
 
         public ReservationHistoryController(IDbRepo repo, UserManager<User> userManager)
-        {   
+        {
             this.repo = repo;
             this.userManager = userManager;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetReservationByPropertyId([FromQuery(Name = "propertyId")] string propertyId)
         {
             var reserv = await repo.ReservationHistories.GetByPropertyIdAsync(propertyId);
@@ -33,7 +35,6 @@ namespace HostelWebAPI.Controllers
         }
 
         [HttpGet("user")]
-        [Authorize]
         public async Task<IActionResult> GetReservationByUserId()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
@@ -46,16 +47,6 @@ namespace HostelWebAPI.Controllers
             return BadRequest();
         }
 
-        public class ReservationRequest
-        {
-            public string PropertyId { get; set; }
-            public string FromDate { get; set; }
-            public string ToDate { get; set; }
-            public int AdultNum { get; set; }
-            public int ChildrenNum { get; set; }
-            public int InfantNum { get; set; }
-        }
-
         // TODO: Extract to business logic
         [HttpPost]
         [Authorize(Roles = "User, Owner, Admin")]
@@ -64,6 +55,8 @@ namespace HostelWebAPI.Controllers
             var from = DateTime.Parse(request.FromDate);
             if (from < DateTime.Today) return BadRequest("Can't choose date in the past");
 
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
 
             var property = await repo.Properties.GetByIdAsync(request.PropertyId);
             if (property == null) return BadRequest("Property does not exist");
@@ -77,20 +70,61 @@ namespace HostelWebAPI.Controllers
 
                 foreach (var dt in reservDatetime)
                 {
-                    if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Can't book!");
+                    if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Wrong dates!");
                 }
             }
             var reserve = new ReservationHistory()
             {
+                ReservationId = Guid.NewGuid().ToString(),
                 FromDate = from,
                 ToDate = to,
+                UserId = user.Id,
+                PropertyId = request.PropertyId,
                 PaymentStatusId = "1",
                 ReservationStatusId = "1",
-                TotalCost = property.PricePerNight * (request.ChildrenNum + request.AdultNum)
+                TotalCost = property.PricePerNight + property.CleaningFee + property.ServiceFee
             };
 
-            return Ok("Can book");
+            try
+            {
+                repo.ReservationHistories.Add(reserve);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            var res = await repo.ReservationHistories.SaveChangeAsync();
+            if (res > 0) return Ok();
+
+            return BadRequest("Something's wrong!");
         }
+
+        [HttpDelete("{reservationId}")]
+        public async Task<IActionResult> DeleteReservation([FromRoute] string reservationId)
+        {
+            var reser = await repo.ReservationHistories.GetByIdAsync(reservationId);
+            if (reser == null) return BadRequest(new { message = "Reservation does not exist!" });
+
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+
+            var property = await repo.Properties.GetByIdAsync(reser.PropertyId);
+
+            // TODO: Extract to business logic
+            // Only user who booked this room and the owner can delete this reservation
+            if (!(reser.UserId == user.Id || reser.UserId == property.OwnerId))
+                return Forbid();
+
+            // Only allow deleting reservation when satisfied reservation status
+            if (reser.ReservationStatusId != Context.ReservationStatus.OnReserved)
+                return BadRequest(new { message = "This reservation cannot be canceled anymore!" });
+
+            var res = repo.ReservationHistories.DeleteByIdAsync(reservationId);
+            await repo.ReservationHistories.SaveChangeAsync();
+            return Ok();
+        }
+
 #nullable enable
         // TODO: Extract to business logic
         private bool UserCanBookFromTo((DateTime from, DateTime to) wantDate, (DateTime from, DateTime to)[] reserved, DateTime[]? dayoff)

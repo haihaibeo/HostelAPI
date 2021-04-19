@@ -53,7 +53,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<ReservationHistory> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return ctx.ReservationHistory.SingleOrDefaultAsync(rh => rh.ReservationId == id);
         }
         #endregion
 
@@ -86,6 +86,24 @@ namespace HostelWebAPI.DataAccess.Repositories
         public void Update(ReservationHistory entity)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<ReservationHistory> AddAsync(ReservationHistory entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ReservationHistory> UpdateAsync(ReservationHistory entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ReservationHistory> DeleteByIdAsync(string id)
+        {
+            var reserv = await ctx.ReservationHistory.SingleOrDefaultAsync(rh => rh.ReservationId == id);
+            if (reserv == null) return null;
+            ctx.ReservationHistory.Remove(reserv);
+            return reserv;
         }
     }
 }

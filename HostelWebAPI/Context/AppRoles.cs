@@ -16,5 +16,7 @@ namespace HostelWebAPI
     {
         public const string RequiredOwnerRole = "RequiredOwnerRole";
         public const string RequiredAdminRole = "RequiredAdminRole";
+        public const string CanDeleteReservation = "CanDeleteReservation";
+        public const string OwnerDeleteProperty = "OwnerDeleteProperty";
     }
 }
