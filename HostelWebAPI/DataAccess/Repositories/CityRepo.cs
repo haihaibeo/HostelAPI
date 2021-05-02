@@ -49,7 +49,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<List<City>> GetAllAsync()
         {
-            return ctx.City.ToListAsync();
+            return ctx.City.Include(c => c.Country).ToListAsync();
         }
 
         public City GetById(string id)

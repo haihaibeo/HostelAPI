@@ -57,9 +57,10 @@ namespace HostelWebAPI
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPropertyTypeRepo, PropertyTypeRepo>();
             services.AddScoped<IUserPropertyLikeRepo, UserPropertyLikeRepo>();
+            services.AddScoped<IReviewRepo, ReviewRepo>();
 
             services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddSwaggerGen(c=>
+            services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -86,7 +87,7 @@ namespace HostelWebAPI
                              In = ParameterLocation.Header,
                          },
                          new List<string>()
-                     }     
+                     }
                 });
             });
 
@@ -98,7 +99,7 @@ namespace HostelWebAPI
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    
+
                 })
                 .AddJwtBearer(cfg =>
                 {
@@ -172,7 +173,8 @@ namespace HostelWebAPI
         private async Task CreateRoleAsync(IServiceProvider isp, string roleName)
         {
             var roleManager = isp.GetRequiredService<RoleManager<IdentityRole>>();
-            if(await roleManager.FindByNameAsync(roleName) == null){
+            if (await roleManager.FindByNameAsync(roleName) == null)
+            {
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }

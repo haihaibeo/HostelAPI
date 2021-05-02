@@ -32,10 +32,22 @@ namespace HostelWebAPI.Models
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<UserPropertyLike> UserPropertyLikes { get; set; }
         public virtual DbSet<PropertyService> PropertyServices { get; set; }
+        public virtual DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.Property(e => e.Star).HasDefaultValue(0);
+                entity.HasIndex(e => new { e.PropId, e.UserId }).IsUnique();
+            });
+
+            modelBuilder.Entity<UserPropertyLike>(ent =>
+            {
+                ent.HasIndex(e => new { e.PropertyId, e.UserId }).IsUnique();
+            });
 
             modelBuilder.Entity<PropertyService>(entity =>
             {
@@ -58,6 +70,7 @@ namespace HostelWebAPI.Models
                 entity.HasMany(u => u.UserPropertyLikes)
                 .WithOne(upl => upl.User).OnDelete(DeleteBehavior.Cascade);
 
+                entity.HasMany(e => e.Reviews).WithOne(r => r.User).OnDelete(DeleteBehavior.Restrict);
                 //entity.HasMany(e => e.UserPropertyLikes)
                 //.WithOne(upl => upl.User).HasForeignKey(upl => upl.UserId).OnDelete(DeleteBehavior.Cascade);
             });
@@ -141,7 +154,7 @@ namespace HostelWebAPI.Models
 
                 entity.Property(e => e.Number)
                     .IsUnicode(false);
-                    //.HasDefaultValueSql("(N'Number default')");
+                //.HasDefaultValueSql("(N'Number default')");
 
                 entity.Property(e => e.StreetName).HasDefaultValueSql("(N'Street Name default')");
 

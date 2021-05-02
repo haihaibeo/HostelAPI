@@ -14,7 +14,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         Task<IEnumerable<ReservationHistory>> GetByUserIdAsync(string userId);
         Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int? numOfMonthAhead);
     }
-  
+
 
     public class ReservationHistoryRepo : IReservationHistoryRepo
     {
@@ -57,11 +57,13 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
         #endregion
 
-        public Task<List<ReservedDate>> GetReservationSchedule(string propertyId,int? numOfMonthAhead)
+        public Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int? numOfMonthAhead)
         {
             if (numOfMonthAhead == null) numOfMonthAhead = 3;
             var today = DateTime.UtcNow;
-            var reserv = ctx.ReservationHistory.Where(rh => rh.ToDate >= today && rh.PropertyId == propertyId).Select(sch => new ReservedDate(sch)).ToListAsync();
+            var reserv = ctx.ReservationHistory.Where(rh => rh.ToDate >= today && rh.PropertyId == propertyId)
+                .Select(sch => new ReservedDate(sch))
+                .ToListAsync();
             return reserv;
         }
 
@@ -74,8 +76,12 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public async Task<IEnumerable<ReservationHistory>> GetByUserIdAsync(string userId)
         {
-            var reservs = await this.GetAllAsync();
-            var founds = reservs.FindAll(r => r.UserId == userId);
+            var founds = await ctx.ReservationHistory.Where(rs => rs.UserId == userId)
+                .Include(rs => rs.ReservationStatus)
+                .Include(rs => rs.PaymentStatus)
+                .Include(rs => rs.Property).ThenInclude(p => p.Images)
+                .ToListAsync();
+
             return founds;
         }
         public Task<int> SaveChangeAsync()

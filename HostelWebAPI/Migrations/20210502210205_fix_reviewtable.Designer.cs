@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210502210205_fix_reviewtable")]
+    partial class fix_reviewtable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -487,9 +489,7 @@ namespace HostelWebAPI.Migrations
                         .HasMaxLength(1000);
 
                     b.Property<int>("Star")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -497,12 +497,11 @@ namespace HostelWebAPI.Migrations
 
                     b.HasKey("ReviewId");
 
+                    b.HasIndex("PropId");
+
                     b.HasIndex("UserId");
 
-                    b.HasIndex("PropId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("Reviews");
+                    b.ToTable("Review");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>

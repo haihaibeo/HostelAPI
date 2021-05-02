@@ -34,6 +34,28 @@ namespace HostelWebAPI.Controllers
             return Ok(reserv);
         }
 
+        public class ReservationResponse
+        {
+            public ReservationResponse(Models.ReservationHistory rs)
+            {
+                Id = rs.ReservationId;
+                Property = new PropertyViewResponse(rs.Property);
+                FromDate = rs.FromDate;
+                ToDate = rs.ToDate;
+                Total = rs.TotalCost;
+                PaymentStatus = rs.PaymentStatus.Status;
+                ReservationStatus = rs.ReservationStatus.Status;
+            }
+            public string Id { get; set; }
+            public PropertyViewResponse Property { get; set; }
+            public DateTime FromDate { get; set; }
+            public DateTime ToDate { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public decimal Total { get; set; }
+            public string PaymentStatus { get; set; }
+            public string ReservationStatus { get; set; }
+        }
+
         [HttpGet("user")]
         public async Task<IActionResult> GetReservationByUserId()
         {
@@ -42,9 +64,10 @@ namespace HostelWebAPI.Controllers
             if (user != null)
             {
                 var reserv = await repo.ReservationHistories.GetByUserIdAsync(user.Id);
-                return Ok(reserv);
+                var response = new List<ReservationResponse>(reserv.Select(rs => new ReservationResponse(rs)));
+                return Ok(response);
             }
-            return BadRequest();
+            return BadRequest(new { message = "User's null" });
         }
 
         // TODO: Extract to business logic
@@ -53,7 +76,7 @@ namespace HostelWebAPI.Controllers
         public async Task<IActionResult> Reserve([FromBody] ReservationRequest request)
         {
             var from = DateTime.Parse(request.FromDate);
-            if (from < DateTime.Today) return BadRequest("Can't choose date in the past");
+            if (from < DateTime.Today) return BadRequest(new { message = "Can't choose date in the past" });
 
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var user = await userManager.FindByEmailAsync(email);

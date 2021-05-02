@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210422135046_add_image_deletehash")]
+    partial class add_image_deletehash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -467,44 +469,6 @@ namespace HostelWebAPI.Migrations
                     b.ToTable("ReservationStatus");
                 });
 
-            modelBuilder.Entity("HostelWebAPI.Models.Review", b =>
-                {
-                    b.Property<string>("ReviewId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("PropId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("ReservationId")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("ReviewComment")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
-
-                    b.Property<int>("Star")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ReviewId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("PropId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("Reviews");
-                });
-
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -607,11 +571,9 @@ namespace HostelWebAPI.Migrations
 
                     b.HasKey("UserPropertyId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PropertyId");
 
-                    b.HasIndex("PropertyId", "UserId")
-                        .IsUnique()
-                        .HasFilter("[PropertyId] IS NOT NULL AND [UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserPropertyLikes");
                 });
@@ -866,21 +828,6 @@ namespace HostelWebAPI.Migrations
                     b.HasOne("HostelWebAPI.Models.User", "User")
                         .WithMany("ReservationHistories")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("HostelWebAPI.Models.Review", b =>
-                {
-                    b.HasOne("HostelWebAPI.Models.Property", "Property")
-                        .WithMany("Reviews")
-                        .HasForeignKey("PropId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HostelWebAPI.Models.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.UserPropertyLike", b =>

@@ -15,15 +15,21 @@ namespace HostelWebAPI.Models
         [Column("ImageID")]
         [StringLength(50)]
         public string ImageId { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Url { get; set; }
+
         [Required]
         [Column("PropertyID")]
         [StringLength(50)]
         public string PropertyId { get; set; }
+
         [StringLength(100)]
         public string Alt { get; set; }
+
+        [StringLength(100)]
+        public string DeleteHash { get; set; }
 
         [ForeignKey(nameof(PropertyId))]
         public virtual Property Property { get; set; }

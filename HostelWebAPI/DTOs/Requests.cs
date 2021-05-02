@@ -47,7 +47,7 @@ namespace HostelWebAPI
         public string CityId { get; set; }
         public IEnumerable<string> ServiceIds { get; set; }
     }
-    
+
     public class ReservationRequest
     {
         public string PropertyId { get; set; }
@@ -57,4 +57,48 @@ namespace HostelWebAPI
         public int ChildrenNum { get; set; }
         public int InfantNum { get; set; }
     }
+
+    public class PublishPropertyRequest
+    {
+        [Required]
+        [MaxLength(50, ErrorMessage = "Property's name exceeded in length")]
+        public string Name { get; set; }
+
+        [Required]
+        [MaxLength(50, ErrorMessage = "Property's description exceeded in length")]
+        public string Description { get; set; }
+
+        [MaxLength(450, ErrorMessage = "Property's introduction exceeded in length")]
+        public string Introduction { get; set; }
+
+        [Required]
+        public string CityId { get; set; }
+
+        public string PropTypeId { get; set; }
+
+        public int MaxGuest { get; set; }
+
+        public string AddressDesc { get; set; }
+
+        [Required]
+        public string StreetName { get; set; }
+
+        [Required]
+        public string Number { get; set; }
+
+        [Required]
+        public List<ImageResponse> Images { get; set; }
+
+        [Required]
+        public ServiceRequest Services { get; set; }
+
+        [Required]
+        public int RefundPercent { get; set; }
+
+        [Required]
+        public decimal BasePrice { get; set; }
+        public decimal ServiceFee { get; set; } = 0;
+        public decimal CleaningFee { get; set; } = 0;
+    }
+
 }

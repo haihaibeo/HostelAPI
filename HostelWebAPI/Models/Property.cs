@@ -16,6 +16,7 @@ namespace HostelWebAPI.Models
         {
             Comments = new HashSet<Comment>();
             Images = new HashSet<Image>();
+            Reviews = new HashSet<Review>();
             ReservationHistories = new HashSet<ReservationHistory>();
             UserPropertyLikes = new HashSet<UserPropertyLike>();
         }
@@ -80,6 +81,8 @@ namespace HostelWebAPI.Models
         public virtual PropertyAddress PropertyAddress { get; set; }
 
         public virtual PropertyService PropertyService { get; set; }
+
+        public virtual ICollection<Review> Reviews { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
 

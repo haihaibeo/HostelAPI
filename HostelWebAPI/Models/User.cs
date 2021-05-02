@@ -14,11 +14,12 @@ namespace HostelWebAPI.Models
         public User()
         {
             Comments = new HashSet<Comment>();
+            Reviews = new HashSet<Review>();
             UserPropertyLikes = new HashSet<UserPropertyLike>();
             ReservationHistories = new HashSet<ReservationHistory>();
         }
 
-        public override string Id { get; set; }
+        public override string Id { get; set; } = Guid.NewGuid().ToString();
 
         [MaxLength(100)]
         public string Name { get; set; }
@@ -27,6 +28,8 @@ namespace HostelWebAPI.Models
         public override string PhoneNumber { get; set; }
         public DateTime TimeCreated { get; set; } = DateTime.UtcNow;
         public string ProfileImageUrl { get; set; }
+
+        public virtual ICollection<Review> Reviews { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
 

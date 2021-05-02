@@ -37,6 +37,7 @@ namespace HostelWebAPI.Controllers
                 Id = c.CityId;
                 CityName = c.Name;
                 CountryId = c.CountryId;
+                CountryName = c.Country.CountryName;
             }
 
             public string Id { get; set; }

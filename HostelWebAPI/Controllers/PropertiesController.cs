@@ -38,7 +38,7 @@ namespace HostelWebAPI.Controllers
 
             if (typeId != null)
                 properties = properties.Where(r => r.PropertyTypeId == typeId).ToList();
-                
+
             resp = properties.Select(p => new PropertyViewResponse(p)).ToList();
 
             return Ok(resp);
@@ -73,7 +73,7 @@ namespace HostelWebAPI.Controllers
         // POST api/<PropertyController>
         [HttpPost]
         [Authorize(Roles = AppRoles.Owner)]
-        public async Task<IActionResult> Post()
+        public IActionResult Post([FromBody] PublishPropertyRequest request)
         {
             return Ok("Hello owner");
         }

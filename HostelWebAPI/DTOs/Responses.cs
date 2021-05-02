@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +17,7 @@ namespace HostelWebAPI
         public object Errors { get; set; }
         public object Messages { get; set; }
     }
-           
+
     public partial class TokenResponse
     {
         public TokenResponse(string userId, string token, string name, string email)
@@ -56,10 +58,20 @@ namespace HostelWebAPI
             Id = i.ImageId;
             Url = i.Url;
             Alt = i.Alt;
+            DeleteHash = i.DeleteHash;
+        }
+
+        [JsonConstructor]
+        public ImageResponse(string url, string? alt, string? deleteHash)
+        {
+            Url = url;
+            Alt = alt;
+            DeleteHash = deleteHash;
         }
         public string Id { get; set; }
         public string Url { get; set; }
-        public string Alt { get; set; }
+        public string? Alt { get; set; }
+        public string? DeleteHash { get; set; }
     }
 
     /// <summary>
@@ -133,4 +145,14 @@ namespace HostelWebAPI
         public decimal FormattedPrice { get; set; }
         public IEnumerable<string> Services { get; set; }
     }
+
+    public class ServiceRequest
+    {
+        public bool Wifi { get; set; }
+        public bool Kitchen { get; set; }
+        public bool Breakfast { get; set; }
+        public bool Pet { get; set; }
+        public bool Parking { get; set; }
+    }
+
 }
