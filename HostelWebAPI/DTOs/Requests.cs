@@ -24,7 +24,6 @@ namespace HostelWebAPI
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         public string Phone { get; set; }
 
         [Required]
@@ -33,8 +32,6 @@ namespace HostelWebAPI
         [Required]
         [Compare(nameof(Password), ErrorMessage = "Password does not match")]
         public string ConfirmPassword { get; set; }
-
-        public string PhoneNumber { get; set; }
     }
 
     public partial class RegisterPropertyRequest

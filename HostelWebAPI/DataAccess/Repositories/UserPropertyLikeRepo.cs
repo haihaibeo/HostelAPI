@@ -52,7 +52,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<List<UserPropertyLike>> GetAllByUserIdAsync(string userId)
         {
-            return ctx.UserPropertyLikes.Where(upl => upl.UserId == userId).Distinct().ToListAsync();
+            return ctx.UserPropertyLikes.Where(upl => upl.UserId == userId).Include(u => u.Property).ThenInclude(p => p.Images).Distinct().ToListAsync();
         }
 
         public UserPropertyLike GetById(string userId)

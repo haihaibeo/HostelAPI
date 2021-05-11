@@ -34,28 +34,31 @@ namespace HostelWebAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("registerUser")]
-        public async Task<IActionResult> RegisterUserAsync()
+        [Route("register-user")]
+        public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterRequest request)
         {
             User user = new User()
             {
-                Name = "User 2",
-                Email = "user2@mail.com",
-                UserName = "user2@mail.com"
+                Name = request.Name == null ? request.Email : request.Name,
+                Email = request.Email,
+                UserName = request.Email
             };
 
-            var res = await userManager.CreateAsync(user, "password");
+            var res = await userManager.CreateAsync(user, request.Password);
             if (res.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, "User");
-                await signInManager.SignInAsync(user, true);
-                return Ok(new MessageResponse($"User {user.Name} registered!", null));
+                await signInManager.SignInAsync(user, false);
+
+                var roles = await userManager.GetRolesAsync(user);
+                var token = tokenService.TokenGenerator(user, roles);
+                return Ok(new TokenResponse(user.Id, token, user.Name, user.Email));
             }
             foreach (var error in res.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            return Ok(new MessageResponse("", ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
+            return BadRequest(new MessageResponse("", ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))));
         }
 
         [HttpGet("{ownerId}")]
@@ -68,7 +71,7 @@ namespace HostelWebAPI.Controllers
                 if (owner == null) return NotFound(new { message = "User not found" });
                 return Ok(owner);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw (e);
             }
@@ -76,27 +79,31 @@ namespace HostelWebAPI.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route("register-owner")]
-        public async Task<IActionResult> RegisterOwnerAsync()
+        [Route("register-host")]
+        public async Task<IActionResult> RegisterHostAsync()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var user = await userManager.FindByEmailAsync(email);
 
-            if(user != null)
+            if (user != null)
             {
                 userManager.AddToRoleAsync(user, AppRoles.Owner).Wait();
+
+                var roles = await userManager.GetRolesAsync(user);
+                var token = tokenService.TokenGenerator(user, roles);
+                return Ok(new TokenResponse(user.Id, token, user.Name, user.Email));
             }
-            return Ok();
+            return BadRequest();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize(Roles = AppRoles.Owner)]
-        [Route("unregister-owner")]
-        public async Task<IActionResult> RemoveOwnerRole()
+        [Route("unregister-host")]
+        public async Task<IActionResult> RemoveHostRole()
         {
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var user = await userManager.FindByEmailAsync(email);
-            if(user != null)
+            if (user != null)
             {
                 var res = await userManager.RemoveFromRoleAsync(user, AppRoles.Owner);
                 if (res.Succeeded) return Ok();
@@ -120,7 +127,8 @@ namespace HostelWebAPI.Controllers
         [Route("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] LoginRequest payload)
         {
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 var result = await signInManager.PasswordSignInAsync(payload.Email, payload.Password, true, false);
                 if (result.Succeeded)
                 {
@@ -137,9 +145,14 @@ namespace HostelWebAPI.Controllers
         [HttpGet]
         [Authorize]
         [Route("validate-token")]
-        public IActionResult ValidateToken()
+        public async Task<IActionResult> ValidateToken()
         {
-            return Ok();
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+            var roles = await userManager.GetRolesAsync(user);
+
+            var token = tokenService.TokenGenerator(user, roles);
+            return Ok(token);
         }
     }
 }

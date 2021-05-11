@@ -85,12 +85,12 @@ namespace HostelWebAPI
             if (p.Images != null)
                 Images = p.Images.Select(i => new ImageResponse(i)).ToList();
             Introduction = p.Introduction;
-            MaxPeople = p.MaxPeople;
+            MaxGuest = p.MaxPeople;
             ReservedDates = reservedDates;
             ServiceFee = p.ServiceFee;
             CleaningFee = p.CleaningFee;
         }
-        public int MaxPeople { get; set; }
+        public int MaxGuest { get; set; }
         public IEnumerable<ImageResponse>? Images { get; set; }
         public string Introduction { get; set; }
         public bool? Liked { get; set; }

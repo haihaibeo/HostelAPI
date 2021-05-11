@@ -28,6 +28,7 @@ namespace HostelWebAPI.Services
         public string TokenGenerator(User user, IEnumerable<string> roles)
         {
             var roleclaims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
+            var roleclaimsByName = roles.Select(r => new Claim("roles", r)).ToArray();
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
@@ -38,6 +39,7 @@ namespace HostelWebAPI.Services
                 new Claim("name", user.Name),
             };
             claims.AddRange(roleclaims);
+            claims.AddRange(roleclaimsByName);
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(config["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

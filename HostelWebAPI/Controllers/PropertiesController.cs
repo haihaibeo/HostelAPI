@@ -29,6 +29,7 @@ namespace HostelWebAPI.Controllers
         }
 
         // GET: api/<PropertyController>
+        // Get all properties
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] string typeId)
@@ -40,10 +41,46 @@ namespace HostelWebAPI.Controllers
                 properties = properties.Where(r => r.PropertyTypeId == typeId).ToList();
 
             resp = properties.Select(p => new PropertyViewResponse(p)).ToList();
+            foreach (var r in resp)
+            {
+                var star = r.TotalStar;
+                var review = r.TotalReview;
+                repo.Properties.CountStarTotalReview(out star, out review, r.Id);
+                r.TotalStar = star;
+                r.TotalReview = review;
+            }
 
             return Ok(resp);
         }
 
+        // Get all properties published by user
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserProps()
+        {
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return Unauthorized(new { message = "Couldn't find user" });
+
+            var allProps = await repo.Properties.GetAllAsync();
+            var props = allProps.Where(p => p.OwnerId == user.Id).ToList().Select(p => new PropertyViewResponse(p));
+
+            return Ok(props);
+        }
+
+        [HttpGet("saved")]
+        public async Task<IActionResult> GetSavedProps()
+        {
+            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return Unauthorized(new { message = "Couldn't find user" });
+
+            var likes = await repo.Likes.GetAllByUserIdAsync(user.Id);
+            var props = likes.Select(l => new PropertyViewResponse(l.Property)).ToList();
+
+            return Ok(props);
+        }
+
+        // Get property by id
         // GET api/<PropertyController>/5
         [HttpGet("{id}")]
         [AllowAnonymous]

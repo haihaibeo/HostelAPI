@@ -12,15 +12,19 @@ namespace HostelWebAPI.DataAccess.Repositories
     {
         Task<Models.PropertyAddress> GetAddressAsync(string propertyId);
         Task<Models.PropertyService> GetServicesAsync(string propertyId);
+
+        Task<List<Property>> GetPropsLikedAsync(string userId);
+
+        void CountStarTotalReview(out int starCount, out int totalReview, string PropId);
     }
 
     public class PropertyRepo : IPropertyRepo
     {
-        private readonly HostelDBContext ctx;
+        private readonly HostelDBContext context;
 
         public PropertyRepo(HostelDBContext ctx)
         {
-            this.ctx = ctx;
+            this.context = ctx;
         }
 
         public void Add(Property entity)
@@ -31,6 +35,18 @@ namespace HostelWebAPI.DataAccess.Repositories
         public Task<Property> AddAsync(Property entity)
         {
             throw new NotImplementedException();
+        }
+
+        public void CountStarTotalReview(out int starCount, out int totalReview, string propId)
+        {
+            totalReview = 0;
+            starCount = 0;
+            var rev = context.Reviews.Where(r => r.PropId == propId).ToListAsync().Result;
+            totalReview = rev.Count;
+            foreach (var r in rev)
+            {
+                starCount += r.Star;
+            }
         }
 
         public void DeleteById(string id)
@@ -45,7 +61,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public async Task<PropertyAddress> GetAddressAsync(string propertyId)
         {
-            var property = await ctx.Property
+            var property = await context.Property
                 .Include(p => p.PropertyAddress).ThenInclude(x => x.City)
                 .SingleOrDefaultAsync(a => a.PropertyTypeId == propertyId);
             return property.PropertyAddress;
@@ -53,12 +69,12 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public IEnumerable<Property> GetAll()
         {
-            return ctx.Property.ToList();
+            return context.Property.ToList();
         }
 
         public Task<List<Property>> GetAllAsync()
         {
-            return ctx.Property
+            return context.Property
                 .Include(a => a.PropertyAddress).ThenInclude(b => b.City)
                 .Include(c => c.PropertyService)
                 .Include(d => d.Images)
@@ -67,23 +83,36 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Property GetById(string id)
         {
-            return ctx.Property
+            return context.Property
                 .Include(x => x.PropertyAddress)
                 .SingleOrDefault(p => p.PropertyId == id);
         }
 
         public Task<Property> GetByIdAsync(string id)
         {
-            return ctx.Property.Include(a => a.ReservationHistories)
+            return context.Property.Include(a => a.ReservationHistories)
                 .Include(b => b.Images)
                 .Include(c => c.PropertyAddress).ThenInclude(add => add.City)
                 .Include(e => e.PropertyService)
                 .SingleOrDefaultAsync(p => p.PropertyId == id);
         }
 
+        public async Task<List<Property>> GetPropsLikedAsync(string userId)
+        {
+            var upl = await context.UserPropertyLikes.Where(upl => upl.UserId == userId).Include(u => u.Property).ToListAsync();
+            var props = new List<Property>();
+
+            foreach (var l in upl)
+            {
+                // props.Add(context.Property.SingleOrDefaultAsync(p => p.PropertyId == l.PropertyId))
+            }
+
+            return props;
+        }
+
         public async Task<PropertyService> GetServicesAsync(string propertyId)
         {
-            var property = await ctx.Property
+            var property = await context.Property
                 .Include(a => a.PropertyService)
                 .SingleOrDefaultAsync(ps => ps.PropertyId == propertyId);
 
@@ -92,7 +121,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<int> SaveChangeAsync()
         {
-            return ctx.SaveChangesAsync();
+            return context.SaveChangesAsync();
         }
 
         public void Update(Property entity)

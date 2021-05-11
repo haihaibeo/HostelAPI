@@ -47,7 +47,6 @@ namespace HostelWebAPI.Controllers
         }
 
         // POST api/<UserPropertyLikesController>
-        // BUG: toggling like too fast leads to duplicated like in db, should add constraint
         [HttpPost("{propertyId}")]
         [Authorize(Roles = AppRoles.User)]
         public async Task<IActionResult> ToggleLike([FromRoute] string propertyId)
