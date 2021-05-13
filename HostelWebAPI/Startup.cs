@@ -1,3 +1,4 @@
+using HostelWebAPI.BL;
 using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.DataAccess.Repositories;
 using HostelWebAPI.Models;
@@ -58,6 +59,7 @@ namespace HostelWebAPI
             services.AddScoped<IPropertyTypeRepo, PropertyTypeRepo>();
             services.AddScoped<IUserPropertyLikeRepo, UserPropertyLikeRepo>();
             services.AddScoped<IReviewRepo, ReviewRepo>();
+            services.AddScoped<IReservationBL, ReservationBL>();
 
             services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>

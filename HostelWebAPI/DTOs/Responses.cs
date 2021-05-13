@@ -40,6 +40,18 @@ namespace HostelWebAPI
         public string Email { get; }
     }
 
+    public class CheckPricingResponse
+    {
+        public int NightCount { get; set; }
+        public decimal PricePerNight { get; set; }
+        public decimal ServiceFee { get; set; }
+        public decimal CleaningFee { get; set; }
+        public decimal Discount { get; set; }
+        public int DiscountPercent { get; set; }
+        public decimal TotalCost { get; set; }
+    }
+
+
     public class ReservedDate
     {
         public ReservedDate(Models.ReservationHistory res)
@@ -47,6 +59,13 @@ namespace HostelWebAPI
             FromDate = res.FromDate.ToUniversalTime();
             ToDate = res.ToDate.ToUniversalTime();
         }
+
+        public ReservedDate(DateTime from, DateTime to)
+        {
+            FromDate = from;
+            ToDate = to;
+        }
+
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
     }

@@ -28,17 +28,40 @@ namespace HostelWebAPI.Controllers
             this.userManager = userManager;
         }
 
+
         // GET: api/<PropertyController>
-        // Get all properties
+        // Get all properties with query search
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll([FromQuery] string typeId)
+        public async Task<IActionResult> GetAll([FromQuery] PropertyQueryRequest query)
         {
             var properties = await repo.Properties.GetAllAsync();
             var resp = new List<PropertyViewResponse>();
 
-            if (typeId != null)
-                properties = properties.Where(r => r.PropertyTypeId == typeId).ToList();
+            if (query.TypeId != null)
+                properties = properties.Where(r => r.PropertyTypeId == query.TypeId).ToList();
+
+            if (query.City != null)
+            {
+                // properties = properties.Where(r => r.PropertyAddress.City.Name.ToLower().Contains(query.City.ToLower())).ToList();
+                var found = new List<Property>();
+                foreach (var r in properties)
+                {
+                    if (r.PropertyAddress.City.Name.ToLower().Contains(query.City.ToLower()))
+                        found.Add(r);
+                }
+                properties = found;
+            }
+
+            if (query.GuestNum > 0)
+                properties = properties.Where(p => p.MaxPeople >= query.GuestNum).ToList();
+
+            if (query.From != null && query.To != null)
+            {
+                var from = DateTime.Parse(query.From);
+                var to = DateTime.Parse(query.To);
+                properties = properties.Where(p => repo.ReservationHistories.CanUserBookWithDate(new ReservedDate(from, to), p.PropertyId).Result).ToList();
+            }
 
             resp = properties.Select(p => new PropertyViewResponse(p)).ToList();
             foreach (var r in resp)

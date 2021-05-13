@@ -50,9 +50,20 @@ namespace HostelWebAPI
         public string PropertyId { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
-        public int AdultNum { get; set; }
+        public int GuestNum { get; set; }
         public int ChildrenNum { get; set; }
-        public int InfantNum { get; set; }
+        public int? InfantNum { get; set; }
+    }
+    public class PropertyQueryRequest
+    {
+#nullable enable
+        public string? City { get; set; }
+        public string? TypeId { get; set; }
+        public string? From { get; set; }
+        public string? To { get; set; }
+        public int? GuestNum { get; set; }
+        public int? ChildrenNum { get; set; }
+#nullable disable
     }
 
     public class PublishPropertyRequest

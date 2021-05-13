@@ -1,4 +1,5 @@
-﻿using HostelWebAPI.DataAccess.Interfaces;
+﻿using HostelWebAPI.BL;
+using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,11 +20,13 @@ namespace HostelWebAPI.Controllers
     {
         private readonly IDbRepo repo;
         private readonly UserManager<User> userManager;
+        private readonly IReservationBL rsvBL;
 
-        public ReservationHistoryController(IDbRepo repo, UserManager<User> userManager)
+        public ReservationHistoryController(IDbRepo repo, UserManager<User> userManager, IReservationBL reservationBL)
         {
             this.repo = repo;
             this.userManager = userManager;
+            this.rsvBL = reservationBL;
         }
 
         [HttpGet]
@@ -83,18 +86,21 @@ namespace HostelWebAPI.Controllers
 
             var property = await repo.Properties.GetByIdAsync(request.PropertyId);
             if (property == null) return BadRequest("Property does not exist");
-            if (request.AdultNum + request.ChildrenNum > property.MaxPeople) return BadRequest("Exceeded max number of people");
+            if (request.GuestNum + request.ChildrenNum > property.MaxPeople) return BadRequest("Exceeded max number of people");
 
             var to = DateTime.Parse(request.ToDate);
             var reservDatetime = property.ReservationHistories;
 
             if (reservDatetime != null && reservDatetime.Count != 0)
             {
+                var dtList = reservDatetime.Select(rs => new ReservedDate(rs)).ToList();
+                var canBook = await repo.ReservationHistories.CanUserBookWithDate(new ReservedDate(from, to), property.PropertyId);
 
-                foreach (var dt in reservDatetime)
-                {
-                    if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Wrong dates!");
-                }
+                if (!canBook) return BadRequest("Wrong dates!");
+                // foreach (var dt in reservDatetime)
+                // {
+                //     if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Wrong dates!");
+                // }
             }
             var reserve = new ReservationHistory()
             {
@@ -121,6 +127,34 @@ namespace HostelWebAPI.Controllers
             if (res > 0) return Ok();
 
             return BadRequest("Something's wrong!");
+        }
+
+
+        [HttpGet]
+        [Route("check-pricing")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPricingForReservation([FromQuery] ReservationRequest request)
+        {
+            await Task.Delay(500);
+            var from = DateTime.Parse(request.FromDate);
+            var to = DateTime.Parse(request.ToDate);
+            var prop = await repo.Properties.GetByIdAsync(request.PropertyId);
+            if (prop == null) return NotFound("Property not found");
+
+            var res = new CheckPricingResponse();
+            res.NightCount = repo.ReservationHistories.CountNight(from, to);
+
+            var percentDiscount = rsvBL.CalculateDiscountPercent(res.NightCount);
+            res.DiscountPercent = percentDiscount;
+
+            res.Discount = prop.PricePerNight * res.NightCount * percentDiscount / 100;
+            res.PricePerNight = prop.PricePerNight;
+            res.CleaningFee = prop.CleaningFee;
+            res.ServiceFee = prop.ServiceFee;
+
+            res.TotalCost = res.PricePerNight * res.NightCount + res.CleaningFee + res.ServiceFee - res.Discount;
+
+            return Ok(res);
         }
 
         [HttpDelete("{reservationId}")]

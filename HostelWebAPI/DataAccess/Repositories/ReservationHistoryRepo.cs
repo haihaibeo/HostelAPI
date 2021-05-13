@@ -12,7 +12,10 @@ namespace HostelWebAPI.DataAccess.Repositories
     {
         Task<IEnumerable<ReservationHistory>> GetByPropertyIdAsync(string propertyId);
         Task<IEnumerable<ReservationHistory>> GetByUserIdAsync(string userId);
-        Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int? numOfMonthAhead);
+        Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int numOfMonthAhead);
+        Task<bool> CanUserBookWithDate(ReservedDate wantDate, string propId);
+        int CountNight(DateTime from, DateTime to);
+
     }
 
 
@@ -57,15 +60,60 @@ namespace HostelWebAPI.DataAccess.Repositories
         }
         #endregion
 
-        public Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int? numOfMonthAhead)
+        public Task<List<ReservedDate>> GetReservationSchedule(string propertyId, int numOfMonthAhead = 3)
         {
-            if (numOfMonthAhead == null) numOfMonthAhead = 3;
             var today = DateTime.UtcNow;
             var reserv = ctx.ReservationHistory.Where(rh => rh.ToDate >= today && rh.PropertyId == propertyId)
                 .Select(sch => new ReservedDate(sch))
                 .ToListAsync();
             return reserv;
         }
+
+        public async Task<bool> CanUserBookWithDate(ReservedDate wantDate, string propId)
+        {
+            var reserv = await GetReservationSchedule(propId);
+            if (!UserCanBookFromTo(wantDate, reserv.ToArray(), null))
+                return false;
+            return true;
+        }
+
+        public int CountNight(DateTime from, DateTime to)
+        {
+            if (from < to)
+            {
+                var count = 0;
+                for (var f = from.Date; f < to.Date; f = f.AddDays(1)) count++;
+                return count;
+            }
+            return -1;
+        }
+
+#nullable enable
+        private bool UserCanBookFromTo(ReservedDate wantDate, ReservedDate[] reserved, DateTime[]? dayoff)
+        {
+            if (wantDate.FromDate < DateTime.Today) return false;
+
+            if (wantDate.FromDate.Date >= wantDate.ToDate.Date) return false;
+
+            foreach (var r in reserved)
+            {
+                if ((wantDate.FromDate < r.ToDate && wantDate.FromDate > r.FromDate) || (wantDate.ToDate > r.FromDate && wantDate.ToDate < r.ToDate))
+                    return false;
+
+                if (wantDate.FromDate >= r.FromDate && wantDate.ToDate <= r.ToDate) return false;
+
+                if (wantDate.FromDate <= r.FromDate && wantDate.ToDate >= r.ToDate) return false;
+            }
+
+            if (dayoff != null)
+                foreach (var d in dayoff)
+                {
+                    if (d.Date > wantDate.FromDate.Date && d.Date < wantDate.ToDate.Date) return false;
+                }
+
+            return true;
+        }
+#nullable disable
 
         public async Task<IEnumerable<ReservationHistory>> GetByPropertyIdAsync(string propertyId)
         {
