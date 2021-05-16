@@ -1,12 +1,16 @@
 {
   "dependencies": {
-    "secrets1": {
-      "type": "secrets.user"
-    },
     "mssql1": {
-      "type": "mssql.onprem",
+      "type": "mssql",
       "connectionId": "DefaultCnn",
-      "secretStore": "LocalSecretsFile"
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": "",
+      "suggestion": "true",
+      "ignored": "true"
     }
   }
 }
