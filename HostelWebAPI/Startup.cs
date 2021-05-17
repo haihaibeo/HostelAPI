@@ -27,12 +27,15 @@ namespace HostelWebAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
+
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,7 +47,14 @@ namespace HostelWebAPI
 
             services.AddDbContext<HostelDBContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultCnn"));
+                if (_env.IsProduction())
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("ProductionDb"));
+                }
+                else if (_env.IsDevelopment())
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("DevelopmentDb"));
+                }
             });
 
             services.AddIdentity<User, IdentityRole>()
