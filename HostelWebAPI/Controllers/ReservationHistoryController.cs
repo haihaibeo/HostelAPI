@@ -48,6 +48,7 @@ namespace HostelWebAPI.Controllers
                 Total = rs.TotalCost;
                 PaymentStatus = rs.PaymentStatus.Status;
                 ReservationStatus = rs.ReservationStatus.Status;
+                CreatedAt = rs.TimeCreated;
             }
             public string Id { get; set; }
             public PropertyViewResponse Property { get; set; }
@@ -67,6 +68,7 @@ namespace HostelWebAPI.Controllers
             if (user != null)
             {
                 var reserv = await repo.ReservationHistories.GetByUserIdAsync(user.Id);
+                reserv = reserv.OrderByDescending(r => r.TimeCreated);
                 var response = new List<ReservationResponse>(reserv.Select(rs => new ReservationResponse(rs)));
                 return Ok(response);
             }
@@ -79,14 +81,16 @@ namespace HostelWebAPI.Controllers
         public async Task<IActionResult> Reserve([FromBody] ReservationRequest request)
         {
             var from = DateTime.Parse(request.FromDate);
-            if (from < DateTime.Today) return BadRequest(new { message = "Can't choose date in the past" });
+            if (from < DateTime.Today)
+                return BadRequest(new MessageResponse(messages: "Can't choose date in the past"));
 
             var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var user = await userManager.FindByEmailAsync(email);
 
             var property = await repo.Properties.GetByIdAsync(request.PropertyId);
             if (property == null) return BadRequest("Property does not exist");
-            if (request.GuestNum + request.ChildrenNum > property.MaxPeople) return BadRequest("Exceeded max number of people");
+            if (request.GuestNum + request.ChildrenNum > property.MaxPeople)
+                return BadRequest(new MessageResponse(messages: "Exceed maximum number of guests"));
 
             var to = DateTime.Parse(request.ToDate);
             var reservDatetime = property.ReservationHistories;
@@ -96,12 +100,17 @@ namespace HostelWebAPI.Controllers
                 var dtList = reservDatetime.Select(rs => new ReservedDate(rs)).ToList();
                 var canBook = await repo.ReservationHistories.CanUserBookWithDate(new ReservedDate(from, to), property.PropertyId);
 
-                if (!canBook) return BadRequest("Wrong dates!");
+                if (!canBook)
+                    return BadRequest(new MessageResponse(messages: "Can't book with current dates"));
                 // foreach (var dt in reservDatetime)
                 // {
                 //     if (!UserCanBookFromTo((from, to), new[] { (dt.FromDate, dt.ToDate) }, null)) return BadRequest("Wrong dates!");
                 // }
             }
+
+            var nightCount = repo.ReservationHistories.CountNight(from, to);
+            var percentDiscount = rsvBL.CalculateDiscountPercent(nightCount);
+
             var reserve = new ReservationHistory()
             {
                 ReservationId = Guid.NewGuid().ToString(),
@@ -111,7 +120,7 @@ namespace HostelWebAPI.Controllers
                 PropertyId = request.PropertyId,
                 PaymentStatusId = "1",
                 ReservationStatusId = "1",
-                TotalCost = property.PricePerNight + property.CleaningFee + property.ServiceFee
+                TotalCost = property.PricePerNight * nightCount * (100 - percentDiscount) / 100 + property.CleaningFee + property.ServiceFee
             };
 
             try
@@ -124,9 +133,10 @@ namespace HostelWebAPI.Controllers
                 throw;
             }
             var res = await repo.ReservationHistories.SaveChangeAsync();
-            if (res > 0) return Ok();
+            if (res > 0)
+                return Ok(new MessageResponse(messages: "Successfully reserved"));
 
-            return BadRequest("Something's wrong!");
+            return BadRequest(new MessageResponse(messages: "Something's wrong"));
         }
 
 

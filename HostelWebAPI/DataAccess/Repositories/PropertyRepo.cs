@@ -12,6 +12,8 @@ namespace HostelWebAPI.DataAccess.Repositories
     {
         Task<Models.PropertyAddress> GetAddressAsync(string propertyId);
         Task<Models.PropertyService> GetServicesAsync(string propertyId);
+        void Add(Property entity, PropertyAddress address, List<Image> images, PropertyService service);
+
 
         Task<List<Property>> GetPropsLikedAsync(string userId);
 
@@ -30,6 +32,14 @@ namespace HostelWebAPI.DataAccess.Repositories
         public void Add(Property entity)
         {
             throw new NotImplementedException();
+        }
+
+        public void Add(Property entity, PropertyAddress address, List<Image> images, PropertyService service)
+        {
+            context.Property.Add(entity);
+            context.PropertyAddress.Add(address);
+            context.Image.AddRange(images);
+            context.PropertyServices.Add(service);
         }
 
         public Task<Property> AddAsync(Property entity)

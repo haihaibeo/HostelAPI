@@ -66,6 +66,13 @@ namespace HostelWebAPI
 #nullable disable
     }
 
+    public class ImageRequest
+    {
+        public string Url { get; set; }
+        public string? Alt { get; set; }
+        public string? DeleteHash { get; set; }
+    }
+
     public class PublishPropertyRequest
     {
         [Required]
@@ -82,6 +89,7 @@ namespace HostelWebAPI
         [Required]
         public string CityId { get; set; }
 
+        public string CountryId { get; set; }
         public string PropTypeId { get; set; }
 
         public int MaxGuest { get; set; }
@@ -95,7 +103,7 @@ namespace HostelWebAPI
         public string Number { get; set; }
 
         [Required]
-        public List<ImageResponse> Images { get; set; }
+        public List<ImageRequest> Images { get; set; }
 
         [Required]
         public ServiceRequest Services { get; set; }

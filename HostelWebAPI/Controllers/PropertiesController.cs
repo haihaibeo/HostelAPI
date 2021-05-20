@@ -133,9 +133,60 @@ namespace HostelWebAPI.Controllers
         // POST api/<PropertyController>
         [HttpPost]
         [Authorize(Roles = AppRoles.Owner)]
-        public IActionResult Post([FromBody] PublishPropertyRequest request)
+        public async Task<IActionResult> Post([FromBody] PublishPropertyRequest request)
         {
-            return Ok("Hello owner");
+            if (ModelState.IsValid)
+            {
+                var addr = new PropertyAddress();
+                var prop = new Property();
+                var images = new List<Image>();
+                var services = new PropertyService();
+                var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+                var user = await userManager.FindByEmailAsync(email);
+
+                addr.CityId = request.CityId;
+
+                prop.PropertyId = Guid.NewGuid().ToString();
+                addr.PropertyId = prop.PropertyId;
+                services.PropertyId = prop.PropertyId;
+
+                prop.Name = request.Name;
+                prop.Description = request.Description;
+                prop.Introduction = request.Introduction;
+                prop.MaxPeople = request.MaxGuest;
+                prop.PricePerNight = request.BasePrice;
+                prop.PropertyTypeId = request.PropTypeId;
+                prop.CleaningFee = request.CleaningFee;
+                prop.ServiceFee = request.ServiceFee;
+                prop.TotalReview = 0;
+                prop.TotalStar = 0;
+                prop.OwnerId = user.Id;
+                addr.Number = request.Number;
+                addr.StreetName = request.StreetName;
+                addr.Description = request.AddressDesc;
+                services.Breakfast = request.Services.Breakfast;
+                services.Kitchen = request.Services.Kitchen;
+                services.PetAllowed = request.Services.Pet;
+                services.Wifi = request.Services.Wifi;
+                services.FreeParking = request.Services.Parking;
+
+                foreach (var i in request.Images)
+                {
+                    var image = new Image();
+                    image.ImageId = Guid.NewGuid().ToString();
+                    image.Alt = i.Alt;
+                    image.DeleteHash = i.DeleteHash;
+                    image.PropertyId = prop.PropertyId;
+                    image.Url = i.Url;
+                    images.Add(image);
+                }
+                repo.Properties.Add(prop, addr, images, services);
+                var saved = await repo.SaveChangesAsync();
+                if (saved > 0)
+                    return Ok("Successfully added new property");
+                else return BadRequest(saved);
+            }
+            return BadRequest();
         }
     }
 }

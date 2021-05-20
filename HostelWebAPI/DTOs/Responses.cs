@@ -9,7 +9,7 @@ namespace HostelWebAPI
 {
     public partial class MessageResponse
     {
-        public MessageResponse(object errors, object messages)
+        public MessageResponse(object errors = null, object messages = null)
         {
             Errors = errors;
             Messages = messages;
@@ -167,11 +167,11 @@ namespace HostelWebAPI
 
     public class ServiceRequest
     {
-        public bool Wifi { get; set; }
-        public bool Kitchen { get; set; }
-        public bool Breakfast { get; set; }
-        public bool Pet { get; set; }
-        public bool Parking { get; set; }
+        public bool Wifi { get; set; } = false;
+        public bool Kitchen { get; set; } = false;
+        public bool Breakfast { get; set; } = false;
+        public bool Pet { get; set; } = false;
+        public bool Parking { get; set; } = false;
     }
 
 }
