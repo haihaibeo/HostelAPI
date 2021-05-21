@@ -8,7 +8,7 @@ namespace HostelWebAPI.BL
         int CalculateDiscountPercent(int nightCount);
     }
 
-    public class ReservationBL : IReservationBL
+    public class DiscountBL : IReservationBL
     {
         public int CalculateDiscountPercent(DateTime from, DateTime to)
         {
