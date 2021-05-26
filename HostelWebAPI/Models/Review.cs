@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,6 +9,15 @@ namespace HostelWebAPI.Models
         public Review()
         {
 
+        }
+
+        public Review(ReviewRequest req)
+        {
+            this.PropId = req.PropertyId;
+            this.ReservationId = req.ReservationId;
+            this.ReviewComment = req.ReviewComment;
+            this.Star = req.StarCount;
+            this.ReviewId = Guid.NewGuid().ToString();
         }
 
         [Key]
@@ -30,6 +40,12 @@ namespace HostelWebAPI.Models
 
         [MaxLength(1000)]
         public string ReviewComment { get; set; }
+
+        [Column(TypeName = "datetime")]
+        public DateTime TimeCreated { get; set; }
+
+        [Column(TypeName = "datetime")]
+        public DateTime TimeUpdated { get; set; }
 
         [ForeignKey(nameof(PropId))]
         public virtual Property Property { get; set; }

@@ -42,6 +42,8 @@ namespace HostelWebAPI.Models
             {
                 entity.Property(e => e.Star).HasDefaultValue(0);
                 entity.HasIndex(e => new { e.PropId, e.UserId }).IsUnique();
+                entity.Property(e => e.TimeCreated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.TimeUpdated).HasDefaultValueSql("(getdate())");
             });
 
             modelBuilder.Entity<UserPropertyLike>(ent =>

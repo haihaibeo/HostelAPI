@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.Models;
@@ -9,6 +10,9 @@ namespace HostelWebAPI.DataAccess.Repositories
     public interface IReviewRepo : IRepository<Models.Review>
     {
         Task<Review> GetByUserPropAsync(string userId, string propId);
+        Task<List<Review>> GetByPropAsync(string propId);
+
+        void Delete(Review review);
     }
 
     public class ReviewRepo : IReviewRepo
@@ -31,6 +35,11 @@ namespace HostelWebAPI.DataAccess.Repositories
             throw new System.NotImplementedException();
         }
 
+        public void Delete(Review review)
+        {
+            context.Reviews.Remove(review);
+        }
+
         public void DeleteById(string id)
         {
             throw new System.NotImplementedException();
@@ -48,7 +57,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public Task<List<Review>> GetAllAsync()
         {
-            return context.Reviews.ToListAsync();
+            return context.Reviews.Include(r => r.User).ToListAsync();
         }
 
         public Review GetById(string id)
@@ -59,6 +68,11 @@ namespace HostelWebAPI.DataAccess.Repositories
         public Task<Review> GetByIdAsync(string id)
         {
             return context.Reviews.SingleOrDefaultAsync(r => r.ReviewId == id);
+        }
+
+        public Task<List<Review>> GetByPropAsync(string propId)
+        {
+            return context.Reviews.Where(r => r.PropId == propId).ToListAsync();
         }
 
         public Task<Review> GetByUserPropAsync(string userId, string propId)
