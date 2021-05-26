@@ -1,4 +1,5 @@
 ﻿using HostelWebAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -54,6 +55,33 @@ namespace HostelWebAPI.Services
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
+
+    public interface IUserService
+    {
+        Task<User> GetCurrentUserAsync(ClaimsPrincipal claimsPrincipal);
+        Task<User> GetUserByIdAsync(string userId);
+    }
+
+    public class UserService : IUserService
+    {
+        private readonly UserManager<User> userManager;
+
+        public UserService(UserManager<User> userManager)
+        {
+            this.userManager = userManager;
+        }
+
+        public Task<User> GetCurrentUserAsync(ClaimsPrincipal claimsPrincipal)
+        {
+            var email = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
+            return userManager.FindByEmailAsync(email);
+        }
+
+        public Task<User> GetUserByIdAsync(string userId)
+        {
+            return userManager.FindByIdAsync(userId);
         }
     }
 }

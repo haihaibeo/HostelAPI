@@ -73,6 +73,16 @@ namespace HostelWebAPI
         public string? DeleteHash { get; set; }
     }
 
+    public class ReviewRequest
+    {
+        public string PropertyId { get; set; }
+        public string? ReservationId { get; set; }
+
+        [Range(1, 5, ErrorMessage = "Star count needs to be from 1 to 5")]
+        public int StarCount { get; set; }
+        public string? ReviewComment { get; set; }
+    }
+
     public class PublishPropertyRequest
     {
         [Required]

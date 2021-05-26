@@ -1,5 +1,6 @@
 ﻿using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.Models;
+using HostelWebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +21,12 @@ namespace HostelWebAPI.Controllers
     public class PropertiesController : ControllerBase
     {
         private readonly IDbRepo repo;
-        private readonly UserManager<User> userManager;
+        private readonly IUserService userService;
 
-        public PropertiesController(IDbRepo repo, UserManager<User> userManager)
+        public PropertiesController(IDbRepo repo, Services.IUserService userService)
         {
             this.repo = repo;
-            this.userManager = userManager;
+            this.userService = userService;
         }
 
 
@@ -80,8 +81,7 @@ namespace HostelWebAPI.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> GetUserProps()
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
             if (user == null) return Unauthorized(new { message = "Couldn't find user" });
 
             var allProps = await repo.Properties.GetAllAsync();
@@ -93,8 +93,7 @@ namespace HostelWebAPI.Controllers
         [HttpGet("saved")]
         public async Task<IActionResult> GetSavedProps()
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
             if (user == null) return Unauthorized(new { message = "Couldn't find user" });
 
             var likes = await repo.Likes.GetAllByUserIdAsync(user.Id);
@@ -115,11 +114,12 @@ namespace HostelWebAPI.Controllers
             var schedules = await repo.ReservationHistories.GetReservationSchedule(id, 3);
 
             var resp = new PropertyResponse(property, schedules);
+            var owner = await userService.GetUserByIdAsync(property.OwnerId);
+            resp.OwnerInfo = new UserInfoResponse(owner);
 
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-                var user = await userManager.FindByEmailAsync(email);
+                var user = await userService.GetCurrentUserAsync(HttpContext.User);
                 var didLike = await repo.Likes.GetByPropertyIdAsync(property.PropertyId, user.Id);
 
                 if (didLike != null) resp.Liked = true;
@@ -141,8 +141,7 @@ namespace HostelWebAPI.Controllers
                 var prop = new Property();
                 var images = new List<Image>();
                 var services = new PropertyService();
-                var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-                var user = await userManager.FindByEmailAsync(email);
+                var user = await userService.GetCurrentUserAsync(HttpContext.User);
 
                 addr.CityId = request.CityId;
 

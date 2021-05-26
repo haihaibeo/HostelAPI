@@ -1,6 +1,7 @@
 ﻿using HostelWebAPI.BL;
 using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.Models;
+using HostelWebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +20,14 @@ namespace HostelWebAPI.Controllers
     public class ReservationHistoryController : ControllerBase
     {
         private readonly IDbRepo repo;
-        private readonly UserManager<User> userManager;
-        private readonly IReservationBL rsvBL;
+        private readonly IDiscountBL rsvBL;
+        private readonly IUserService userService;
 
-        public ReservationHistoryController(IDbRepo repo, UserManager<User> userManager, IReservationBL reservationBL)
+        public ReservationHistoryController(IDbRepo repo, UserManager<User> userManager, IDiscountBL reservationBL, Services.IUserService userService)
         {
             this.repo = repo;
-            this.userManager = userManager;
             this.rsvBL = reservationBL;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -63,8 +64,7 @@ namespace HostelWebAPI.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> GetReservationByUserId()
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
             if (user != null)
             {
                 var reserv = await repo.ReservationHistories.GetByUserIdAsync(user.Id);
@@ -84,8 +84,7 @@ namespace HostelWebAPI.Controllers
             if (from < DateTime.Today)
                 return BadRequest(new MessageResponse(messages: "Can't choose date in the past"));
 
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
 
             var property = await repo.Properties.GetByIdAsync(request.PropertyId);
             if (property == null) return BadRequest("Property does not exist");
@@ -173,8 +172,7 @@ namespace HostelWebAPI.Controllers
             var reser = await repo.ReservationHistories.GetByIdAsync(reservationId);
             if (reser == null) return BadRequest(new { message = "Reservation does not exist!" });
 
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
 
             var property = await repo.Properties.GetByIdAsync(reser.PropertyId);
 
@@ -184,7 +182,7 @@ namespace HostelWebAPI.Controllers
                 return Forbid();
 
             // Only allow deleting reservation when satisfied reservation status
-            if (reser.ReservationStatusId != Context.ReservationStatus.OnReserved)
+            if (reser.ReservationStatusId != ReservationStatus.OnReserved)
                 return BadRequest(new { message = "This reservation cannot be canceled anymore!" });
 
             var res = repo.ReservationHistories.DeleteByIdAsync(reservationId);

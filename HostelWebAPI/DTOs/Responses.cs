@@ -115,7 +115,7 @@ namespace HostelWebAPI
         public bool? Liked { get; set; }
         public decimal ServiceFee { get; set; }
         public decimal CleaningFee { get; set; }
-
+        public UserInfoResponse OwnerInfo { get; set; }
         public IEnumerable<Models.Comment>? Comments { get; set; }
         public IEnumerable<ReservedDate>? ReservedDates { get; set; }
         public IEnumerable<DateTime>? DaysOff { get; set; }
@@ -163,6 +163,41 @@ namespace HostelWebAPI
         public int TotalStar { get; set; }
         public decimal FormattedPrice { get; set; }
         public IEnumerable<string> Services { get; set; }
+    }
+
+    public class UserInfoResponse
+    {
+        public UserInfoResponse(Models.User user)
+        {
+            this.Name = user.Name != null ? user.Name : user.Email;
+            this.UserId = user.Id;
+            this.ProfileImageUrl = user.ProfileImageUrl;
+        }
+        public string Name { get; set; }
+        public string UserId { get; set; }
+        public string ProfileImageUrl { get; set; }
+    }
+
+    public class ReviewResponse
+    {
+        public ReviewResponse(Models.Review review, Models.User user)
+        {
+            this.User = new UserInfoResponse(user);
+            this.TimeUpdated = review.TimeUpdated;
+            this.ReviewId = review.ReviewId;
+            this.Comment = review.ReviewComment;
+            this.StarCount = review.Star;
+            this.PropertyId = review.PropId;
+            this.TimeCreated = review.TimeCreated;
+        }
+
+        public UserInfoResponse User { get; set; }
+        public DateTime TimeUpdated { get; set; }
+        public DateTime TimeCreated { get; set; }
+        public string ReviewId { get; set; }
+        public string Comment { get; set; }
+        public int StarCount { get; set; }
+        public string PropertyId { get; set; }
     }
 
     public class ServiceRequest
