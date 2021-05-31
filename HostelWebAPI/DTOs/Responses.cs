@@ -134,8 +134,6 @@ namespace HostelWebAPI
             else ThumbnailUrl = p.ThumbnailUrl;
             Description = p.Description;
             Location = p.PropertyAddress != null ? p.PropertyAddress.City.Name : null;
-            TotalReview = p.TotalReview;
-            TotalStar = p.TotalStar;
             FormattedPrice = p.PricePerNight;
             Services = getServices(p.PropertyService);
         }

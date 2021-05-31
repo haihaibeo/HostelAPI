@@ -47,6 +47,10 @@ namespace HostelWebAPI.Models
         [StringLength(50)]
         public string PropertyTypeId { get; set; }
 
+        // [Required]
+        [StringLength(50)]
+        public string PropertyStatusId { get; set; }
+
         [DefaultValue(0)]
         public int TotalReview { get; set; }
 
@@ -79,6 +83,9 @@ namespace HostelWebAPI.Models
         public virtual PropertyType PropertyType { get; set; }
 
         public virtual PropertyAddress PropertyAddress { get; set; }
+
+        [ForeignKey(nameof(PropertyStatusId))]
+        public virtual PropertyStatus PropertyStatus { get; set; }
 
         public virtual PropertyService PropertyService { get; set; }
 

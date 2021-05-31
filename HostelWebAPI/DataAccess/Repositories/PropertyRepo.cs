@@ -136,7 +136,7 @@ namespace HostelWebAPI.DataAccess.Repositories
 
         public void Update(Property entity)
         {
-            throw new NotImplementedException();
+            context.Property.Update(entity);
         }
 
         public Task<Property> UpdateAsync(Property entity)

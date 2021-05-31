@@ -67,11 +67,9 @@ namespace HostelWebAPI.Controllers
             resp = properties.Select(p => new PropertyViewResponse(p)).ToList();
             foreach (var r in resp)
             {
-                var star = r.TotalStar;
-                var review = r.TotalReview;
-                repo.Properties.CountStarTotalReview(out star, out review, r.Id);
-                r.TotalStar = star;
-                r.TotalReview = review;
+                var reviews = await repo.Reviews.GetByPropAsync(r.Id);
+                r.TotalReview = reviews.Count;
+                r.TotalStar = reviews.Sum(r => r.Star);
             }
 
             return Ok(resp);
@@ -117,6 +115,10 @@ namespace HostelWebAPI.Controllers
             var owner = await userService.GetUserByIdAsync(property.OwnerId);
             resp.OwnerInfo = new UserInfoResponse(owner);
 
+            var reviews = await repo.Reviews.GetByPropAsync(id);
+            resp.TotalReview = reviews.Count;
+            resp.TotalStar = reviews.Sum(r => r.Star);
+
             if (HttpContext.User.Identity.IsAuthenticated)
             {
                 var user = await userService.GetCurrentUserAsync(HttpContext.User);
@@ -128,6 +130,34 @@ namespace HostelWebAPI.Controllers
 
             if (property != null) return Ok(resp);
             else return BadRequest();
+        }
+
+        [HttpPut("validate-prop")]
+        [Authorize(Roles = AppRoles.Admin)]
+        public async Task<IActionResult> ValidateProp([FromBody] ValidationRequest req)
+        {
+            var prop = await repo.Properties.GetByIdAsync(req.PropId);
+            if (prop == null) return NotFound();
+
+            // TODO: check for prop status id
+            prop.PropertyStatusId = req.PropStatusId;
+            repo.Properties.Update(prop);
+
+            var res = await repo.SaveChangesAsync();
+            return Ok(res);
+        }
+
+        [HttpPut("{propId}")]
+        [Authorize(Roles = AppRoles.Owner)]
+        public async Task<IActionResult> UpdateProperty([FromBody] PublishPropertyRequest request, [FromRoute] string propId)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
+            var prop = await repo.Properties.GetByIdAsync(propId);
+            if (prop.OwnerId != user.Id) return BadRequest();
+
+            return Ok();
         }
 
         // POST api/<PropertyController>

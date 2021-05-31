@@ -38,6 +38,7 @@ namespace HostelWebAPI.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("email", user.Email),
                 new Claim("name", user.Name),
+                new Claim("userId", user.Id),
             };
             claims.AddRange(roleclaims);
             claims.AddRange(roleclaimsByName);

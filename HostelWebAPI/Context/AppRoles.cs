@@ -12,6 +12,14 @@ namespace HostelWebAPI
         public const string Admin = "Admin";
     }
 
+    public static class PropertyStatusConst
+    {
+        public const string OnValidation = "1";
+        public const string IsActive = "2";
+        public const string IsClosed = "3";
+        public const string IsRejected = "4";
+    }
+
     public static class ReservationStatus
     {
         public const string OnReserved = "1";

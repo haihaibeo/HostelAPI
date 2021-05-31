@@ -1,5 +1,6 @@
 using HostelWebAPI.DataAccess.Interfaces;
 using HostelWebAPI.DataAccess.Repositories;
+using HostelWebAPI.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,27 @@ namespace HostelWebAPI
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var env = services.GetRequiredService<IWebHostEnvironment>();
+
+                    if (!env.IsDevelopment())
+                    {
+                        var context = services.GetRequiredService<HostelDBContext>();
+                        DbInitializer.Initialize(context);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

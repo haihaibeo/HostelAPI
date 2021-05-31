@@ -33,10 +33,16 @@ namespace HostelWebAPI.Models
         public virtual DbSet<UserPropertyLike> UserPropertyLikes { get; set; }
         public virtual DbSet<PropertyService> PropertyServices { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
+        public virtual DbSet<PropertyStatus> PropertyStatus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Property>(entity =>
+            {
+                entity.Property(e => e.PropertyStatusId).HasDefaultValue("1");
+            });
 
             modelBuilder.Entity<Review>(entity =>
             {

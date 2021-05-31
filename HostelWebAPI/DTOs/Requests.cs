@@ -83,6 +83,14 @@ namespace HostelWebAPI
         public string? ReviewComment { get; set; }
     }
 
+    public class ValidationRequest
+    {
+        [Required]
+        public string PropId { get; set; }
+        [Required]
+        public string PropStatusId { get; set; }
+    }
+
     public class PublishPropertyRequest
     {
         [Required]
