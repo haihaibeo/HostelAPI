@@ -69,6 +69,7 @@ namespace HostelWebAPI
             services.AddScoped<IPropertyTypeRepo, PropertyTypeRepo>();
             services.AddScoped<IUserPropertyLikeRepo, UserPropertyLikeRepo>();
             services.AddScoped<IReviewRepo, ReviewRepo>();
+            services.AddScoped<IServiceRepo, ServiceRepo>();
             services.AddScoped<IDiscountBL, DiscountBL>();
             services.AddScoped<IUserService, UserService>();
 

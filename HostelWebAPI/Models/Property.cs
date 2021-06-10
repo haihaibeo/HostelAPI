@@ -19,6 +19,7 @@ namespace HostelWebAPI.Models
             Reviews = new HashSet<Review>();
             ReservationHistories = new HashSet<ReservationHistory>();
             UserPropertyLikes = new HashSet<UserPropertyLike>();
+            PropertyWithServices = new HashSet<PropertyWithService>();
         }
 
         [Key]
@@ -87,8 +88,6 @@ namespace HostelWebAPI.Models
         [ForeignKey(nameof(PropertyStatusId))]
         public virtual PropertyStatus PropertyStatus { get; set; }
 
-        public virtual PropertyService PropertyService { get; set; }
-
         public virtual ICollection<Review> Reviews { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
@@ -98,5 +97,7 @@ namespace HostelWebAPI.Models
         public virtual ICollection<ReservationHistory> ReservationHistories { get; set; }
 
         public virtual ICollection<UserPropertyLike> UserPropertyLikes { get; set; }
+
+        public virtual ICollection<PropertyWithService> PropertyWithServices { get; set; }
     }
 }

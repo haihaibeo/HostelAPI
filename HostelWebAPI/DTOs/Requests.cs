@@ -124,7 +124,7 @@ namespace HostelWebAPI
         public List<ImageRequest> Images { get; set; }
 
         [Required]
-        public ServiceRequest Services { get; set; }
+        public IEnumerable<string> ServiceIdList { get; set; }
 
         [Required]
         public int RefundPercent { get; set; }

@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210609125351_add_prop_service")]
+    partial class add_prop_service
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -289,6 +291,43 @@ namespace HostelWebAPI.Migrations
                     b.ToTable("PropertyAddress");
                 });
 
+            modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
+                {
+                    b.Property<string>("PropertyId")
+                        .HasColumnName("PropertyId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<bool>("Breakfast")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("FreeParking")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Kitchen")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("PetAllowed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("Wifi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("PropertyId");
+
+                    b.ToTable("PropertyServices");
+                });
+
             modelBuilder.Entity("HostelWebAPI.Models.PropertyStatus", b =>
                 {
                     b.Property<string>("PropertyStatusId")
@@ -544,7 +583,7 @@ namespace HostelWebAPI.Migrations
 
                     b.HasKey("ServiceId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("HostelWebAPI.Models.User", b =>
@@ -863,6 +902,15 @@ namespace HostelWebAPI.Migrations
                         .WithOne("PropertyAddress")
                         .HasForeignKey("HostelWebAPI.Models.PropertyAddress", "PropertyId")
                         .HasConstraintName("FK_RoomAddresses_Properties")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HostelWebAPI.Models.PropertyService", b =>
+                {
+                    b.HasOne("HostelWebAPI.Models.Property", "Property")
+                        .WithOne("PropertyService")
+                        .HasForeignKey("HostelWebAPI.Models.PropertyService", "PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

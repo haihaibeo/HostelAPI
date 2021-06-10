@@ -4,14 +4,16 @@ using HostelWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HostelWebAPI.Migrations
 {
     [DbContext(typeof(HostelDBContext))]
-    partial class HostelDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210609131747_minor_db_fix")]
+    partial class minor_db_fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -11,10 +11,9 @@ namespace HostelWebAPI.DataAccess.Repositories
     public interface IPropertyRepo : IRepository<Models.Property>
     {
         Task<Models.PropertyAddress> GetAddressAsync(string propertyId);
-        Task<Models.PropertyService> GetServicesAsync(string propertyId);
         void Add(Property entity, PropertyAddress address, List<Image> images, PropertyService service);
 
-
+        Task<List<Service>> GetServices(string propertyId);
         Task<List<Property>> GetPropsLikedAsync(string userId);
 
         void CountStarTotalReview(out int starCount, out int totalReview, string PropId);
@@ -39,7 +38,6 @@ namespace HostelWebAPI.DataAccess.Repositories
             context.Property.Add(entity);
             context.PropertyAddress.Add(address);
             context.Image.AddRange(images);
-            context.PropertyServices.Add(service);
         }
 
         public Task<Property> AddAsync(Property entity)
@@ -86,7 +84,6 @@ namespace HostelWebAPI.DataAccess.Repositories
         {
             return context.Property
                 .Include(a => a.PropertyAddress).ThenInclude(b => b.City)
-                .Include(c => c.PropertyService)
                 .Include(d => d.Images)
                 .ToListAsync();
         }
@@ -103,7 +100,6 @@ namespace HostelWebAPI.DataAccess.Repositories
             return context.Property.Include(a => a.ReservationHistories)
                 .Include(b => b.Images)
                 .Include(c => c.PropertyAddress).ThenInclude(add => add.City)
-                .Include(e => e.PropertyService)
                 .SingleOrDefaultAsync(p => p.PropertyId == id);
         }
 
@@ -120,13 +116,12 @@ namespace HostelWebAPI.DataAccess.Repositories
             return props;
         }
 
-        public async Task<PropertyService> GetServicesAsync(string propertyId)
+        public Task<List<Service>> GetServices(string propertyId)
         {
-            var property = await context.Property
-                .Include(a => a.PropertyService)
-                .SingleOrDefaultAsync(ps => ps.PropertyId == propertyId);
-
-            return property.PropertyService;
+            return context.PropertyWithServices
+                .Where(s => s.PropertyId == propertyId)
+                .Select(pws => pws.Service)
+                .ToListAsync();
         }
 
         public Task<int> SaveChangeAsync()

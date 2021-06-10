@@ -13,6 +13,7 @@ public static class DbInitializer
         SeedPropertyStatusAsync(context).Wait();
         SeedAppRolesAsync(context).Wait();
         SeedReservationStatusAsync(context).Wait();
+        SeedServiceName(context).Wait();
     }
 
     private static async Task SeedPropertyStatusAsync(HostelDBContext context)
@@ -39,6 +40,18 @@ public static class DbInitializer
             },
         };
         context.PropertyStatus.AddRange(defaultStt);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedServiceName(HostelDBContext context)
+    {
+        var services = await context.Services.ToListAsync();
+        if (services.Count > 0) return;
+
+        var initServices = ServicesDefault.GetAllServices();
+        foreach (var s in initServices)
+            context.Services.Add(new Service() { ServiceId = s.Id, ServiceName = s.Name });
+
         await context.SaveChangesAsync();
     }
 

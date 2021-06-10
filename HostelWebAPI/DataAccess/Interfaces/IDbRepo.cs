@@ -13,7 +13,7 @@ namespace HostelWebAPI.DataAccess.Interfaces
         ICityRepo Cities { get; }
         IPropertyTypeRepo PropertyTypes { get; }
         IUserPropertyLikeRepo Likes { get; }
-
+        IServiceRepo Services { get; }
         IReviewRepo Reviews { get; }
         Task<int> SaveChangesAsync();
     }

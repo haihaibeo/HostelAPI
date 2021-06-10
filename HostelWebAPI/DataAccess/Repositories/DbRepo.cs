@@ -18,6 +18,7 @@ namespace HostelWebAPI.DataAccess.Repositories
             IPropertyTypeRepo PropertyTypes,
             IUserPropertyLikeRepo Likes,
             IReviewRepo Reviews,
+            IServiceRepo Services,
             HostelDBContext ctx
             )
         {
@@ -25,6 +26,7 @@ namespace HostelWebAPI.DataAccess.Repositories
             this.PropertyTypes = PropertyTypes;
             this.Likes = Likes;
             this.Reviews = Reviews;
+            this.Services = Services;
             this.ctx = ctx;
             this.Properties = Properties;
             this.ReservationHistories = ReservationHistories;
@@ -35,6 +37,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         public IPropertyTypeRepo PropertyTypes { get; }
         public IUserPropertyLikeRepo Likes { get; }
         public IReviewRepo Reviews { get; }
+        public IServiceRepo Services { get; }
 
         public Task<int> SaveChangesAsync()
         {

@@ -31,9 +31,10 @@ namespace HostelWebAPI.Models
         public virtual DbSet<ReservationStatus> ReservationStatus { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<UserPropertyLike> UserPropertyLikes { get; set; }
-        public virtual DbSet<PropertyService> PropertyServices { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<PropertyStatus> PropertyStatus { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<PropertyWithService> PropertyWithServices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,15 +56,6 @@ namespace HostelWebAPI.Models
             modelBuilder.Entity<UserPropertyLike>(ent =>
             {
                 ent.HasIndex(e => new { e.PropertyId, e.UserId }).IsUnique();
-            });
-
-            modelBuilder.Entity<PropertyService>(entity =>
-            {
-                entity.Property(e => e.Kitchen).HasDefaultValue(false);
-                entity.Property(e => e.PetAllowed).HasDefaultValue(false);
-                entity.Property(e => e.Wifi).HasDefaultValue(false);
-                entity.Property(e => e.FreeParking).HasDefaultValue(false);
-                entity.Property(e => e.Breakfast).HasDefaultValue(false);
             });
 
             modelBuilder.Entity<User>(entity =>

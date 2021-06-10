@@ -70,20 +70,32 @@ namespace HostelWebAPI.Controllers
                 var reviews = await repo.Reviews.GetByPropAsync(r.Id);
                 r.TotalReview = reviews.Count;
                 r.TotalStar = reviews.Sum(r => r.Star);
+                r.Services = new List<ServiceResponse>();
+                var services = await repo.Properties.GetServices(r.Id);
+                foreach (var s in services)
+                {
+                    r.Services.Add(new ServiceResponse(s));
+                }
             }
 
             return Ok(resp);
         }
 
-        // Get all properties published by user
-        [HttpGet("user")]
-        public async Task<IActionResult> GetUserProps()
+        // Get all properties published by owner
+        [HttpGet("host")]
+        public async Task<IActionResult> GetOwnerProps()
         {
             var user = await userService.GetCurrentUserAsync(HttpContext.User);
             if (user == null) return Unauthorized(new { message = "Couldn't find user" });
 
             var allProps = await repo.Properties.GetAllAsync();
             var props = allProps.Where(p => p.OwnerId == user.Id).ToList().Select(p => new PropertyViewResponse(p));
+
+            foreach (var p in props)
+            {
+                var services = await repo.Properties.GetServices(p.Id);
+                services.ForEach(s => p.Services.Add(new ServiceResponse(s)));
+            }
 
             return Ok(props);
         }
@@ -104,7 +116,7 @@ namespace HostelWebAPI.Controllers
         // GET api/<PropertyController>/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, [FromQuery] string isEditing)
         {
             var property = await repo.Properties.GetByIdAsync(id);
             if (property == null) return NotFound(new { message = "Property not found" });
@@ -114,6 +126,12 @@ namespace HostelWebAPI.Controllers
             var resp = new PropertyResponse(property, schedules);
             var owner = await userService.GetUserByIdAsync(property.OwnerId);
             resp.OwnerInfo = new UserInfoResponse(owner);
+
+            var services = await repo.Properties.GetServices(id);
+            foreach (var s in services)
+            {
+                resp.Services.Add(new ServiceResponse(s));
+            }
 
             var reviews = await repo.Reviews.GetByPropAsync(id);
             resp.TotalReview = reviews.Count;
@@ -127,9 +145,7 @@ namespace HostelWebAPI.Controllers
                 if (didLike != null) resp.Liked = true;
                 else resp.Liked = false;
             }
-
-            if (property != null) return Ok(resp);
-            else return BadRequest();
+            return Ok(resp);
         }
 
         [HttpPut("validate-prop")]
@@ -193,11 +209,6 @@ namespace HostelWebAPI.Controllers
                 addr.Number = request.Number;
                 addr.StreetName = request.StreetName;
                 addr.Description = request.AddressDesc;
-                services.Breakfast = request.Services.Breakfast;
-                services.Kitchen = request.Services.Kitchen;
-                services.PetAllowed = request.Services.Pet;
-                services.Wifi = request.Services.Wifi;
-                services.FreeParking = request.Services.Parking;
 
                 foreach (var i in request.Images)
                 {
@@ -216,6 +227,17 @@ namespace HostelWebAPI.Controllers
                 else return BadRequest(saved);
             }
             return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("services")]
+        public async Task<IActionResult> GetAllServices()
+        {
+            var services = await repo.Services.GetAllAsync();
+
+            var resp = new List<ServiceResponse>();
+            services.ForEach(s => resp.Add(new ServiceResponse(s)));
+            return Ok(resp);
         }
     }
 }

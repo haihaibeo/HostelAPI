@@ -79,7 +79,7 @@ namespace HostelWebAPI
             Alt = i.Alt;
             DeleteHash = i.DeleteHash;
         }
-
+#nullable enable
         [JsonConstructor]
         public ImageResponse(string url, string? alt, string? deleteHash)
         {
@@ -91,6 +91,7 @@ namespace HostelWebAPI
         public string Url { get; set; }
         public string? Alt { get; set; }
         public string? DeleteHash { get; set; }
+#nullable disable
     }
 
     /// <summary>
@@ -108,17 +109,29 @@ namespace HostelWebAPI
             ReservedDates = reservedDates;
             ServiceFee = p.ServiceFee;
             CleaningFee = p.CleaningFee;
+            PropertyTypeId = p.PropertyTypeId;
+            StreetName = p.PropertyAddress.StreetName;
+            PropertyNumber = p.PropertyAddress.Number;
+            Note = p.PropertyAddress.Description;
+            TimePublished = p.TimeCreated;
         }
         public int MaxGuest { get; set; }
-        public IEnumerable<ImageResponse>? Images { get; set; }
+        public string PropertyTypeId { get; set; }
         public string Introduction { get; set; }
         public bool? Liked { get; set; }
         public decimal ServiceFee { get; set; }
         public decimal CleaningFee { get; set; }
+        public string StreetName { get; set; }
+        public string PropertyNumber { get; set; }
+        public string Note { get; set; }
+        public DateTime TimePublished { get; set; }
         public UserInfoResponse OwnerInfo { get; set; }
+#nullable enable
+        public IEnumerable<ImageResponse>? Images { get; set; }
         public IEnumerable<Models.Comment>? Comments { get; set; }
         public IEnumerable<ReservedDate>? ReservedDates { get; set; }
         public IEnumerable<DateTime>? DaysOff { get; set; }
+#nullable disable
     }
 
     /// <summary>
@@ -135,7 +148,6 @@ namespace HostelWebAPI
             Description = p.Description;
             Location = p.PropertyAddress != null ? p.PropertyAddress.City.Name : null;
             FormattedPrice = p.PricePerNight;
-            Services = getServices(p.PropertyService);
         }
 
         protected IEnumerable<string> getServices(Models.PropertyService s)
@@ -160,7 +172,21 @@ namespace HostelWebAPI
         public int TotalReview { get; set; }
         public int TotalStar { get; set; }
         public decimal FormattedPrice { get; set; }
-        public IEnumerable<string> Services { get; set; }
+        public List<ServiceResponse> Services { get; set; } = new List<ServiceResponse>();
+    }
+
+    public partial class ServiceResponse
+    {
+        public ServiceResponse(Models.Service service)
+        {
+            this.ServiceId = service.ServiceId;
+            this.ServiceName = service.ServiceName;
+            this.Description = service.Description;
+        }
+
+        public string ServiceId { get; set; }
+        public string ServiceName { get; set; }
+        public string Description { get; set; }
     }
 
     public class UserInfoResponse
@@ -196,15 +222,6 @@ namespace HostelWebAPI
         public string Comment { get; set; }
         public int StarCount { get; set; }
         public string PropertyId { get; set; }
-    }
-
-    public class ServiceRequest
-    {
-        public bool Wifi { get; set; } = false;
-        public bool Kitchen { get; set; } = false;
-        public bool Breakfast { get; set; } = false;
-        public bool Pet { get; set; } = false;
-        public bool Parking { get; set; } = false;
     }
 
 }
