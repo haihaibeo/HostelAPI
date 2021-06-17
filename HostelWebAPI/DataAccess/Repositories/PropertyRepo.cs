@@ -12,9 +12,9 @@ namespace HostelWebAPI.DataAccess.Repositories
     {
         Task<Models.PropertyAddress> GetAddressAsync(string propertyId);
         void Add(Property entity, PropertyAddress address, List<Image> images, PropertyService service);
-
         Task<List<Service>> GetServices(string propertyId);
         Task<List<Property>> GetPropsLikedAsync(string userId);
+        Task<List<Property>> GetPropertiesByPropStatusId(string propStatusId);
 
         void CountStarTotalReview(out int starCount, out int totalReview, string PropId);
     }
@@ -83,6 +83,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         public Task<List<Property>> GetAllAsync()
         {
             return context.Property
+                .Include(p => p.PropertyStatus)
                 .Include(a => a.PropertyAddress).ThenInclude(b => b.City)
                 .Include(d => d.Images)
                 .ToListAsync();
@@ -99,6 +100,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         {
             return context.Property.Include(a => a.ReservationHistories)
                 .Include(b => b.Images)
+                .Include(p => p.PropertyStatus)
                 .Include(c => c.PropertyAddress).ThenInclude(add => add.City)
                 .SingleOrDefaultAsync(p => p.PropertyId == id);
         }
@@ -122,6 +124,11 @@ namespace HostelWebAPI.DataAccess.Repositories
                 .Where(s => s.PropertyId == propertyId)
                 .Select(pws => pws.Service)
                 .ToListAsync();
+        }
+
+        public Task<List<Property>> GetPropertiesByPropStatusId(string propStatusId)
+        {
+            return context.Property.Where(p => p.PropertyStatusId == propStatusId).ToListAsync();
         }
 
         public Task<int> SaveChangeAsync()

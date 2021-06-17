@@ -63,6 +63,8 @@ namespace HostelWebAPI.Services
     {
         Task<User> GetCurrentUserAsync(ClaimsPrincipal claimsPrincipal);
         Task<User> GetUserByIdAsync(string userId);
+
+        Task<IList<string>> GetUserRoles(ClaimsPrincipal claimsPrincipal);
     }
 
     public class UserService : IUserService
@@ -83,6 +85,13 @@ namespace HostelWebAPI.Services
         public Task<User> GetUserByIdAsync(string userId)
         {
             return userManager.FindByIdAsync(userId);
+        }
+
+        public async Task<IList<string>> GetUserRoles(ClaimsPrincipal claimsPrincipal)
+        {
+            var user = await GetCurrentUserAsync(claimsPrincipal);
+            var roles = await userManager.GetRolesAsync(user);
+            return roles;
         }
     }
 }

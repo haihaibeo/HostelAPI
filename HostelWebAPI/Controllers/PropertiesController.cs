@@ -29,7 +29,6 @@ namespace HostelWebAPI.Controllers
             this.userService = userService;
         }
 
-
         // GET: api/<PropertyController>
         // Get all properties with query search
         [HttpGet]
@@ -37,6 +36,8 @@ namespace HostelWebAPI.Controllers
         public async Task<IActionResult> GetAll([FromQuery] PropertyQueryRequest query)
         {
             var properties = await repo.Properties.GetAllAsync();
+            properties.RemoveAll(p => p.PropertyStatusId != PropertyStatusConst.IsActive);
+
             var resp = new List<PropertyViewResponse>();
 
             if (query.TypeId != null)
@@ -100,6 +101,7 @@ namespace HostelWebAPI.Controllers
             return Ok(props);
         }
 
+        // Get all saved properties
         [HttpGet("saved")]
         public async Task<IActionResult> GetSavedProps()
         {
@@ -108,6 +110,12 @@ namespace HostelWebAPI.Controllers
 
             var likes = await repo.Likes.GetAllByUserIdAsync(user.Id);
             var props = likes.Select(l => new PropertyViewResponse(l.Property)).ToList();
+            foreach (var r in props)
+            {
+                var reviews = await repo.Reviews.GetByPropAsync(r.Id);
+                r.TotalReview = reviews.Count;
+                r.TotalStar = reviews.Sum(r => r.Star);
+            }
 
             return Ok(props);
         }
@@ -120,6 +128,16 @@ namespace HostelWebAPI.Controllers
         {
             var property = await repo.Properties.GetByIdAsync(id);
             if (property == null) return NotFound(new { message = "Property not found" });
+
+            // If this property is not active for reservation, then only allow Admin or Owner to get this room info
+            if (property.PropertyStatusId != PropertyStatusConst.IsActive)
+            {
+                var user = await userService.GetCurrentUserAsync(HttpContext.User);
+                if (user == null) return Unauthorized();
+
+                var roles = await userService.GetUserRoles(HttpContext.User);
+                if (user.Id != property.OwnerId && !roles.Contains(AppRoles.Admin)) return NotFound(new { message = "Property not found" });
+            }
 
             var schedules = await repo.ReservationHistories.GetReservationSchedule(id, 3);
 
@@ -148,19 +166,80 @@ namespace HostelWebAPI.Controllers
             return Ok(resp);
         }
 
-        [HttpPut("validate-prop")]
+        // ADMIN get unvalidated properties
+        [HttpGet("not-active")]
         [Authorize(Roles = AppRoles.Admin)]
-        public async Task<IActionResult> ValidateProp([FromBody] ValidationRequest req)
+        public async Task<IActionResult> GetUnvalidateProperty([FromQuery] string propStatusId)
         {
-            var prop = await repo.Properties.GetByIdAsync(req.PropId);
+            var unvalidProperty = await repo.Properties.GetAllAsync();
+            var resp = new List<PropertyViewResponse>();
+            unvalidProperty.RemoveAll(p => p.PropertyStatusId == PropertyStatusConst.IsActive);
+
+            if (propStatusId != null) unvalidProperty.RemoveAll(p => p.PropertyStatusId != propStatusId);
+            unvalidProperty.ForEach(p => resp.Add(new PropertyViewResponse(p)));
+
+            return Ok(resp);
+        }
+
+        // ADMIN reject properties
+        [HttpPut("reject/{propId}")]
+        [Authorize(Roles = AppRoles.Admin)]
+        public async Task<IActionResult> Reject([FromRoute] string propId)
+        {
+            var prop = await repo.Properties.GetByIdAsync(propId);
+            if (prop == null) return NotFound("Property not found");
+
+            try
+            {
+                prop.PropertyStatusId = PropertyStatusConst.IsRejected;
+                await repo.SaveChangesAsync();
+                return Ok();
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // ADMIN validate property
+        [HttpPut("validate/{propId}")]
+        [Authorize(Roles = AppRoles.Admin)]
+        public async Task<IActionResult> ValidateProp([FromRoute] string propId)
+        {
+            var prop = await repo.Properties.GetByIdAsync(propId);
             if (prop == null) return NotFound();
 
             // TODO: check for prop status id
-            prop.PropertyStatusId = req.PropStatusId;
+            prop.PropertyStatusId = PropertyStatusConst.IsActive;
             repo.Properties.Update(prop);
 
             var res = await repo.SaveChangesAsync();
             return Ok(res);
+        }
+
+        // OWNER / ADMIN close a property
+        [HttpPut("toggle-close/{propId}")]
+        [Authorize(Roles = AppRoles.Owner + "," + AppRoles.Admin)]
+        public async Task<IActionResult> CloseProperty([FromRoute] string propId)
+        {
+            var prop = await repo.Properties.GetByIdAsync(propId);
+            if (prop == null) return NotFound();
+
+            var user = await userService.GetCurrentUserAsync(HttpContext.User);
+            var roles = await userService.GetUserRoles(HttpContext.User);
+            if (prop.OwnerId == user.Id || roles.Contains(AppRoles.Admin))
+            {
+                if (prop.PropertyStatusId == PropertyStatusConst.IsActive)
+                    prop.PropertyStatusId = PropertyStatusConst.IsClosed;
+                else if (prop.PropertyStatusId == PropertyStatusConst.IsClosed)
+                    prop.PropertyStatusId = PropertyStatusConst.IsActive;
+                else return NotFound("Action cannot be done!");
+
+                await repo.SaveChangesAsync();
+                return Ok();
+            }
+
+            return NotFound("Somwthing's wrong");
         }
 
         [HttpPut("{propId}")]
@@ -194,6 +273,8 @@ namespace HostelWebAPI.Controllers
                 prop.PropertyId = Guid.NewGuid().ToString();
                 addr.PropertyId = prop.PropertyId;
                 services.PropertyId = prop.PropertyId;
+
+                prop.PropertyStatusId = PropertyStatusConst.OnValidation;
 
                 prop.Name = request.Name;
                 prop.Description = request.Description;

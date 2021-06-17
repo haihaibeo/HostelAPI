@@ -148,20 +148,7 @@ namespace HostelWebAPI
             Description = p.Description;
             Location = p.PropertyAddress != null ? p.PropertyAddress.City.Name : null;
             FormattedPrice = p.PricePerNight;
-        }
-
-        protected IEnumerable<string> getServices(Models.PropertyService s)
-        {
-            List<string> services = new List<string>();
-            if (s != null)
-            {
-                if (s.Breakfast == true) services.Add(nameof(s.Breakfast));
-                if (s.Kitchen == true) services.Add(nameof(s.Kitchen));
-                if (s.PetAllowed == true) services.Add("Pet");
-                if (s.Wifi == true) services.Add(nameof(s.Wifi));
-            }
-
-            return services;
+            PropertyStatus = p.PropertyStatus.Status;
         }
 
         public string Id { get; set; }
@@ -172,6 +159,7 @@ namespace HostelWebAPI
         public int TotalReview { get; set; }
         public int TotalStar { get; set; }
         public decimal FormattedPrice { get; set; }
+        public string PropertyStatus { get; set; }
         public List<ServiceResponse> Services { get; set; } = new List<ServiceResponse>();
     }
 

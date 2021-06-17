@@ -36,7 +36,7 @@ namespace HostelWebAPI.DataAccess.Repositories
         {
             var pt = await cx.PropertyType.Include(x => x.Properties).SingleOrDefaultAsync(t => t.PropertyTypeId == propertyTypeId);
             if (pt == null) return 0;
-            return pt.Properties.Count;
+            return pt.Properties.Where(p => p.PropertyStatusId == PropertyStatusConst.IsActive).ToArray().Count();
         }
 
         public void DeleteById(string id)

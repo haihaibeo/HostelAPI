@@ -128,6 +128,7 @@ namespace HostelWebAPI.DataAccess.Repositories
                 .Include(rs => rs.ReservationStatus)
                 .Include(rs => rs.PaymentStatus)
                 .Include(rs => rs.Property).ThenInclude(p => p.Images)
+                .Include(rs => rs.Property).ThenInclude(p => p.PropertyStatus)
                 .ToListAsync();
 
             return founds;

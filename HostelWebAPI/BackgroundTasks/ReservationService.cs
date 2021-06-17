@@ -12,13 +12,13 @@ namespace HostelWebAPI
     public class ReservationService : BackgroundService
     {
         private readonly ILogger<ReservationService> logger;
-        private readonly IServiceProvider isp;
+        private readonly IServiceProvider sp;
         private readonly IDbRepo repo;
 
-        public ReservationService(ILogger<ReservationService> logger, IServiceProvider isp)
+        public ReservationService(ILogger<ReservationService> logger, IServiceProvider sp)
         {
             this.logger = logger;
-            this.isp = isp;
+            this.sp = sp;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -31,13 +31,11 @@ namespace HostelWebAPI
             var recycleTime = new TimeSpan(1, 0, 0); // 1 hour
             while (!stoppingToken.IsCancellationRequested)
             {
-                using (IServiceScope scope = isp.CreateScope())
+                using (IServiceScope scope = sp.CreateScope())
                 {
                     var repo = scope.ServiceProvider.GetRequiredService<IDbRepo>();
                     var worker = new ReservationWorker(repo, logger);
                     await worker.UpdateReservationStatus();
-
-                    // logger.LogInformation("Still running");
                 }
                 await Task.Delay(recycleTime, stoppingToken);
             }

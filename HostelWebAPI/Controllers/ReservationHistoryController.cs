@@ -62,7 +62,7 @@ namespace HostelWebAPI.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetReservationByUserId()
+        public async Task<IActionResult> GetReservationByUser()
         {
             var user = await userService.GetCurrentUserAsync(HttpContext.User);
             if (user != null)
