@@ -34,7 +34,7 @@ namespace HostelWebAPI
         // TODO: include payment status
         public async Task UpdateReservationStatus()
         {
-            logger.LogInformation("Update reservation started");
+            logger.LogInformation("--Update reservation started--");
             var today = DateTime.Today;
             var resv = await repo.ReservationHistories.GetAllAsync();
 
@@ -45,7 +45,7 @@ namespace HostelWebAPI
             var onReserved = resv.Where(r => r.ReservationStatusId == ReservationStatus.OnReserved).ToList();
             onReserved.ForEach(r =>
             {
-                if (r.FromDate <= today)
+                if (r.FromDate >= today)
                 {
                     r.ReservationStatusId = ReservationStatus.Active;
                     countFromReserved++;
@@ -64,9 +64,12 @@ namespace HostelWebAPI
 
             try
             {
+                Console.WriteLine($"Current ONRESERVED reservations count: {onReserved.Count}");
+                Console.WriteLine($"Current ACTIVE reservations count: {onActive.Count}");
+
                 var save = await repo.SaveChangesAsync();
-                if (save > 0) logger.LogInformation($"Updated {save} reservations status");
-                else logger.LogInformation("No status updated");
+                if (save > 0) Console.WriteLine($"Updated {save} reservations status");
+                else Console.WriteLine("No status updated");
             }
             catch (System.Exception e)
             {

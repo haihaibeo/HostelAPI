@@ -184,9 +184,13 @@ namespace HostelWebAPI
             this.Name = user.Name != null ? user.Name : user.Email;
             this.UserId = user.Id;
             this.ProfileImageUrl = user.ProfileImageUrl;
+            this.PhoneNumber = user.PhoneNumber;
+            this.Email = user.Email;
         }
         public string Name { get; set; }
         public string UserId { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public string ProfileImageUrl { get; set; }
     }
 

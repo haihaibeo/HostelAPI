@@ -28,7 +28,7 @@ namespace HostelWebAPI
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var recycleTime = new TimeSpan(1, 0, 0); // 1 hour
+            var recycleTime = new TimeSpan(0, 0, 2); // 2 secs
             while (!stoppingToken.IsCancellationRequested)
             {
                 using (IServiceScope scope = sp.CreateScope())

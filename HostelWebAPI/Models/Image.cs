@@ -17,7 +17,7 @@ namespace HostelWebAPI.Models
         public string ImageId { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(500)]
         public string Url { get; set; }
 
         [Required]

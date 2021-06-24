@@ -1,4 +1,5 @@
-﻿using HostelWebAPI.Models;
+﻿using HostelWebAPI.DataAccess.Interfaces;
+using HostelWebAPI.Models;
 using HostelWebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,12 +19,13 @@ namespace HostelWebAPI.Controllers
     [Produces("application/json")]
     public class UserController : ControllerBase
     {
-
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
+        private readonly IDbRepo repo;
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService, IDbRepo repo)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.tokenService = tokenService;
+            this.repo = repo;
         }
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
@@ -77,6 +79,16 @@ namespace HostelWebAPI.Controllers
             }
         }
 
+        [HttpGet("propId/{propId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetOwnerBasicInfoByPropId([FromRoute] string propId)
+        {
+            var props = await repo.Properties.GetByIdAsync(propId);
+            var owner = await userManager.FindByIdAsync(props.OwnerId);
+
+            return Ok(new UserInfoResponse(owner));
+        }
+
         [HttpPost]
         [Authorize]
         [Route("register-host")]
@@ -109,17 +121,6 @@ namespace HostelWebAPI.Controllers
                 if (res.Succeeded) return Ok();
             }
             return BadRequest();
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "User")]
-        [Route("test-authen")]
-        public async Task<object> Test()
-        {
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
-            var user = await userManager.FindByEmailAsync(email);
-            var role = await userManager.GetRolesAsync(user);
-            return user.UserName;
         }
 
         [HttpPost]
